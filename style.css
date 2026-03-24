@@ -178,6 +178,11 @@ h3 {
   color: inherit;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* ── FOOTER ── */
 footer {
   background-color: #ff8fab;
