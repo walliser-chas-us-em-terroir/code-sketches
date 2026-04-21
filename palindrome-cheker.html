@@ -17,25 +17,29 @@
 <script>
 const theFeedback = document.getElementById("feedback");
 const theButton = document.getElementById("theButton");
-const theInput = document.getElementById("inputString");
+
 theButton.addEventListener("click", checkTheText);
+
 function checkTheText() {
-const word = theInput.value.trim();
-if (word === "") {
-theFeedback.innerHTML = "Entre un mot d'abord!";
-return;
+  const theInput = document.getElementById("inputString");
+  const word = theInput.value.trim();
+
+  if (word === "") {
+    theFeedback.innerHTML = "Entre un mot d'abord!";
+    return;
   }
+
   if (isPalindrome(word)) {
-theFeedback.innerHTML = "\"" + word + "\" est un palindrome!";
+    theFeedback.innerHTML = "\"" + word + "\" est un palindrome!";
   } else {
-theFeedback.innerHTML = "\"" + word + "\" n'est pas un palindrome.";
+    theFeedback.innerHTML = "\"" + word + "\" n'est pas un palindrome.";
   }
-  theInput.value = "";
 }
+
 function isPalindrome(str) {
-const cleaned = str.toLowerCase().replace(/[\s\-]/g, "");
-const reversed = cleaned.split("").reverse().join("");
-return cleaned === reversed;
+  const cleaned = str.toLowerCase().replace(/[\s\-]/g, "");
+  const reversed = cleaned.split("").reverse().join("");
+  return cleaned === reversed;
 }
 </script>
 </body>
