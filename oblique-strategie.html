@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  #Strategie {
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    padding: 48px 56px;
+    max-width: 700px;
+    width: 90%;
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 1.8rem;
+    font-weight: 900;
+    line-height: 1.4;
+    letter-spacing: -0.04em;
+  }
+
+  button {
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: background 0.18s, color 0.18s;
+  }
+
+  button:hover {
+    background: #111;
+    color: #fff;
+  }
+</style>
+
+<body>
+    <h1 id="Strategie">....</h1>
+
+    <script src="oblique-stratiges.js"></script>
+    <script>
+
+        window.onload = function(){
+            var strategy = document.getElementById("Strategie");
+            // var strategie = document.getElementById("Strategie");
+            // strategie.innerHTML = "Hello,";
+
+            // const Strategies = [
+            //     "Chaton",
+            //     "Chien",
+            //     "Lapin",
+            //     "Oiseau",
+            // ];
+
+        //    let total = Strategies.length;
+        //    let rando = Math.random();
+        //    let hasar = rando * total;
+        //    let choix = Math.floor( hasar);
+        //    strategy.innerHTML = Strategies[choix];
+
+            // version compacte
+           strategy.innerHTML = Strategies[Math.floor(Math.random() * Strategies.length)];
+        }
+        
+    </script>
+
+    <button onclick="window.location.reload();">
+        ⌘&thinsp;R</button>
+
+</body>
+</html>
