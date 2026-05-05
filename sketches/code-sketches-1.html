@@ -1,110 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Sketch N° — Mathias Udriot</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
-  <link rel="stylesheet" href="../style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch N° — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
 </head>
-<body>
+<body class="sketch-page">
 
-  <!-- ── HEADER ── -->
-  <header>
-    <div class="header-left">
-      <div class="logo-star">
-        <a href="../index.html">
-          <img src="https://avatars.githubusercontent.com/u/179213365?v=4" alt="photo de profil github"/>
-        </a>
-      </div>
-      <span class="logo-text">MATHIAS UDRIOT</span>
+<!-- ── MAIN ── -->
+<main>
+  <h3>Titre du projet</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Décris ici ce que fait ton sketch — les formes, les mouvements,
+        les interactions possibles. Qu'est-ce qui se passe quand on bouge
+        la souris ou qu'on clique ?
+      </p>
+      <p>
+        Tu peux aussi évoquer les techniques p5.js utilisées, ou ce qui
+        t'a inspiré pour ce projet.
+      </p>
+      <div class="sketch-meta">Sketch N° &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
     </div>
-    <div class="header-right">
-      <a href="https://github.com/GenerationOvo/code-sketches" target="_blank" rel="noopener" class="github-link">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#111">
-          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303
-            3.438 9.8 8.205 11.385.6.113.82-.258.82-.577
-            0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61
-            C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729
-            1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305
-            3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93
-            0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176
-            0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405
-            1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23
-            3.285-1.23.645 1.653.24 2.873.12 3.176.765.84
-            1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475
-            5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015
-            3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592
-            24 12.297c0-6.627-5.373-12-12-12"/>
-        </svg>
-      </a>
-    </div>
-  </header>
+  </div>
+</main>
 
-  <!-- ── MAIN ── -->
-  <main>
-
-    <h3>Titre du projet</h3>
-
-    <div class="sketch-layout">
-
-      <div class="sketch-canvas-wrap" id="canvas-container"></div>
-
-      <div class="sketch-description">
-        <p>
-          Décris ici ce que fait ton sketch — les formes, les mouvements,
-          les interactions possibles. Qu'est-ce qui se passe quand on bouge
-          la souris ou qu'on clique ?
-        </p>
-        <p>
-          Tu peux aussi évoquer les techniques p5.js utilisées, ou ce qui
-          t'a inspiré pour ce projet.
-        </p>
-        <div class="sketch-meta">Sketch N° &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
-      </div>
-
-    </div>
-
-    <div class="sketch-back-wrap">
-      <a href="../index.html" class="sketch-back">← Retour aux projets</a>
-    </div>
-
-  </main>
-
-  <!-- ── FOOTER ── */
-  <footer>
-    <span>2026 | © ERACOM/ID432/Mathias Udriot</span>
-  </footer>
-
-  <!-- ── P5.JS ── -->
-  <script>
-    new p5(function(p) {
-
-      // ─────────────────────────────────────
-      //  TON CODE P5.JS ICI
-      // ─────────────────────────────────────
-
-      p.setup = function() {
-        const container = document.getElementById('canvas-container');
-        const cnv = p.createCanvas(container.offsetWidth, container.offsetHeight);
-        cnv.parent('canvas-container');
-        p.background(220);
-      };
-
-      p.draw = function() {
-        p.background(220, 220, 220, 40);
-        p.noStroke();
-        p.fill(233, 30, 140, 200);
-        p.ellipse(p.mouseX, p.mouseY, 40, 40);
-      };
-
-      p.windowResized = function() {
-        const container = document.getElementById('canvas-container');
-        p.resizeCanvas(container.offsetWidth, container.offsetHeight);
-      };
-
-    });
-  </script>
+<!-- ── P5.JS ── -->
+<script>
+new p5(function(p) {
+  // ─────────────────────────────────────
+  //  TON CODE P5.JS ICI
+  // ─────────────────────────────────────
+  p.setup = function() {
+    const container = document.getElementById('canvas-container');
+    const cnv = p.createCanvas(container.offsetWidth, container.offsetHeight);
+    cnv.parent('canvas-container');
+    p.background(220);
+  };
+  p.draw = function() {
+    p.background(220, 220, 220, 40);
+    p.noStroke();
+    p.fill(233, 30, 140, 200);
+    p.ellipse(p.mouseX, p.mouseY, 40, 40);
+  };
+  p.windowResized = function() {
+    const container = document.getElementById('canvas-container');
+    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+  };
+});
+</script>
 
 </body>
 </html>

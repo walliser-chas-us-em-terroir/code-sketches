@@ -1,13 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>code-sketches-7</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch N° — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
 </head>
-<body>
+<body class="sketch-page">
 
-  <h1>code-sketches-7</h1>
+<!-- ── MAIN ── -->
+<main>
+  <h3>Titre du projet</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Décris ici ce que fait ton sketch — les formes, les mouvements,
+        les interactions possibles. Qu'est-ce qui se passe quand on bouge
+        la souris ou qu'on clique ?
+      </p>
+      <p>
+        Tu peux aussi évoquer les techniques p5.js utilisées, ou ce qui
+        t'a inspiré pour ce projet.
+      </p>
+      <div class="sketch-meta">Sketch N° &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+new p5(function(p) {
+  // ─────────────────────────────────────
+  //  TON CODE P5.JS ICI
+  // ─────────────────────────────────────
+  p.setup = function() {
+    const container = document.getElementById('canvas-container');
+    const cnv = p.createCanvas(container.offsetWidth, container.offsetHeight);
+    cnv.parent('canvas-container');
+    p.background(220);
+  };
+  p.draw = function() {
+    p.background(220, 220, 220, 40);
+    p.noStroke();
+    p.fill(233, 30, 140, 200);
+    p.ellipse(p.mouseX, p.mouseY, 40, 40);
+  };
+  p.windowResized = function() {
+    const container = document.getElementById('canvas-container');
+    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+  };
+});
+</script>
 
 </body>
 </html>
