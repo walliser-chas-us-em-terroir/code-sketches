@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 8 — Damier fun — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Damier fun</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Un damier animé où les cases les plus éloignées du coin supérieur gauche
+        se mettent progressivement à tourner, créant un effet de vortex.
+      </p>
+      <p>
+        Chaque case utilise <code>push()</code> / <code>pop()</code> pour isoler
+        sa rotation, calculée en fonction de sa distance via <code>dist()</code>.
+      </p>
+      <div class="sketch-meta">Sketch 8 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let taille = 50;
+let angle = 0;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  rectMode(CENTER);
+}
+
+function draw() {
+  background(220);
+  for (let y = 0; y < height; y += taille) {
+    for (let x = 0; x < width; x += taille) {
+      push();
+      translate(x + taille / 2, y + taille / 2);
+      let maxDist = dist(0, 0, width, height);
+      let d = dist(x, y, 0, 0);
+      let a = 0;
+      if (d > maxDist * 0.6) {
+        a = angle * ((d - maxDist * 0.6) / (maxDist * 0.4));
+      }
+      rotate(a);
+      fill((x + y) / taille % 2 == 0 ? 0 : 255);
+      rect(0, 0, taille, taille);
+      pop();
+    }
+  }
+  angle += 0.05;
+}
+</script>
+
+</body>
+</html>

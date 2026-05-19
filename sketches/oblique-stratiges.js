@@ -5,18 +5,6 @@
 // Fifth, again slightly revised edition, 2001
 // ©1975 Brian Eno and Peter Schmidt
 
-// These cards evolved from seperate observatiosn of the 
-// principles underlying what we were doing. Sometimes they were 
-// recognized in retrospect (intellect catching up with intuition),
-// sometimes they were identified as they were happening,
-// sometimes they were formulated.
-// They can be used as a pack (a set of possibilities being
-// continuously reviewed in the mind) or by drawing a single card from
-// the shuffled pack when a dilemma occurs in a working situation.
-// In this case the card is trusted even if its appropriateness is quite
-// unclear. They are not final, as new ideas will present themselves, 
-// and others will become self-evident.
-
 const Strategies = [
 	"A line has two sides",
 	"Abandon desire",
@@ -41,7 +29,7 @@ const Strategies = [
 	"Courage!",
 	"Cut a vital connection",
 	"Decorate, decorate",
-	"Define an area as ‘safe’ and use it as an anchor",
+	"Define an area as 'safe' and use it as an anchor",
 	"Destroy: <ul><li>nothing</li><li>the most important thing</li></ul>",
 	"Discard an axiom",
 	"Disciplined self-indulgence",
@@ -54,12 +42,12 @@ const Strategies = [
 	"Do the last thing first",
 	"Do the words need changing?",
 	"Do we need holes?",
-	"Don’t avoid what is easy",
-	"Don’t be afraid of things because they’re easy to do",
-	"Don’t be frightened of cliches",
-	"Don‘t be frightened to display your talents",
-	"Don’t break the silence",
-	"Don’t stress one thing more than another",
+	"Don't avoid what is easy",
+	"Don't be afraid of things because they're easy to do",
+	"Don't be frightened of cliches",
+	"Don't be frightened to display your talents",
+	"Don't break the silence",
+	"Don't stress one thing more than another",
 	"Emphasize differences",
 	"Emphasize the flaws",
 	"Faced with a choice, do both <br><small>(given by Dieter Rot)</small>",
@@ -86,10 +74,10 @@ const Strategies = [
 	"Magnify the most difficult details",
 	"Make a blank valuable by putting it in an exquisite frame",
 	"Make a sudden, destructive unpredecitable action; incorporate",
-	"Make an exhaustive list of everything you might do and do the last thing on the list",	
+	"Make an exhaustive list of everything you might do and do the last thing on the list",
 	"Make it more sensual",
 	"Make something implied more definite (reinforce, duplicate)",
-	"Make what’s perfect more human",
+	"Make what's perfect more human",
 	"Move towards the unimportant",
 	"Not building a wall but making a brick",
 	"Once the search has is in progress, something will be found",
@@ -120,7 +108,7 @@ const Strategies = [
 	"Trust in the you of now",
 	"Try faking it! <br><small>(given by Stewart Brand)</small>",
 	"Turn it upside down",
-	"Use ’unqualified’ people",
+	"Use 'unqualified' people",
 	"Use an old idea",
 	"Use an unacceptable colour",
 	"Use cliches",
@@ -136,7 +124,7 @@ const Strategies = [
 	"What to increase? What to reduce?",
 	"What to maintain?",
 	"What would your closest friend do?",
-	"What wouldn’t you do?",
+	"What wouldn't you do?",
 	"When is it for?",
 	"Where is the edge? <br>Where does the frame start?",
 	"Which elements can be grouped?",
@@ -146,6 +134,6 @@ const Strategies = [
 	"Work at a different speed",
 	"Would anybody want it?",
 	"You are an engineer",
-	"You don’t have to be ashamed of using your own ideas",
-	"Your mistake was a hidden intention" // no comma after the last one!
+	"You don't have to be ashamed of using your own ideas",
+	"Your mistake was a hidden intention"
 ];

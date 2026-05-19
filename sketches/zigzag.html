@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 5 — Zigzag — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Zigzag</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Trois motifs zigzag dessinés à des positions, tailles et épaisseurs
+        différentes grâce à une fonction réutilisable <code>zigzag(x, y, l, h, e)</code>.
+      </p>
+      <p>
+        Chaque zigzag est composé de cinq lignes tracées avec <code>line()</code>,
+        formant un motif en escalier symétrique.
+      </p>
+      <div class="sketch-meta">Sketch 5 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+}
+
+function draw() {
+  background(220);
+
+  zigzag(20, 30, 80, 120, 40);
+  zigzag(320, 20, 20, 120, 1);
+  zigzag(90, 310, 80, 80, 12);
+}
+
+function zigzag(x, y, l, h, e) {
+  strokeWeight(e);
+  line(x, y, x + l, y);
+  line(x, y + h / 2, x + l, y);
+  line(x, y + h / 2, x + l, y + h / 2);
+  line(x, y + h, x + l, y + h / 2);
+  line(x, y + h, x + l, y + h);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 7 — Logo DVD — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Logo DVD</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Trois logos rebondissent sur les bords avec des vitesses différentes.
+        Le fond blanc du PNG est rendu transparent par manipulation des pixels.
+      </p>
+      <p>
+        Utilisation d'un objet <code>bouncy</code> comme prototype, dont
+        <code>chaton</code> et <code>machin</code> héritent via <code>Object.create()</code>.
+      </p>
+      <div class="sketch-meta">Sketch 7 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let logo;
+
+function preload() {
+  logo = loadImage('dvd.png');
+}
+
+let bouncy = {
+  size: 64,
+  posX: 10,
+  posY: 15,
+  vitX: 1.2,
+  vitY: 0.9,
+  name: 'un chien',
+
+  update: function() {
+    this.posX += this.vitX;
+    this.posY += this.vitY;
+
+    if (this.posX + this.size > width || this.posX < 0) {
+      this.vitX *= -1;
+    }
+    if (this.posY + this.size > height || this.posY < 0) {
+      this.vitY *= -1;
+    }
+
+    noStroke();
+    image(logo, this.posX, this.posY, this.size, this.size * 0.67);
+    text(this.name, this.posX, this.posY - 4);
+  }
+};
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  logo.loadPixels();
+  for (let i = 0; i < logo.pixels.length; i += 4) {
+    if (logo.pixels[i] > 240 && logo.pixels[i + 1] > 240 && logo.pixels[i + 2] > 240) {
+      logo.pixels[i + 3] = 0;
+    }
+  }
+  logo.updatePixels();
+}
+
+let chaton = Object.create(bouncy);
+chaton.name = 'un bon';
+chaton.vitX = 1.5;
+
+let machin = Object.create(bouncy);
+machin.name = 'fusilléééééé';
+machin.vitY = -2;
+
+function draw() {
+  background(220);
+  bouncy.update();
+  chaton.update();
+  machin.update();
+}
+</script>
+
+</body>
+</html>

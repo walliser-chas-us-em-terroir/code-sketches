@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 10 — Palindrome Checker — Mathias Udriot</title>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<main>
+  <h3>Palindrome Checker</h3>
+  <div class="sketch-layout">
+
+    <div class="sketch-ui-wrap">
+      <input type="text" id="inputString" placeholder="Entre un mot..." autocomplete="off" />
+      <button id="theButton">Vérifier</button>
+      <p id="feedback">Le résultat apparaîtra ici.</p>
+    </div>
+
+    <div class="sketch-description">
+      <p>
+        Entre un mot ou une phrase pour savoir s'il s'agit d'un palindrome —
+        un texte qui se lit de la même façon dans les deux sens.
+      </p>
+      <p>
+        Le script ignore la casse, les espaces et les tirets, puis compare
+        la chaîne nettoyée à son inverse via <code>split().reverse().join()</code>.
+        Tu peux aussi valider avec <kbd>Entrée</kbd>.
+      </p>
+      <div class="sketch-meta">Sketch 10 &nbsp;·&nbsp; JavaScript &nbsp;·&nbsp; 2026</div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const theFeedback = document.getElementById('feedback');
+const theButton   = document.getElementById('theButton');
+const theInput    = document.getElementById('inputString');
+
+theButton.addEventListener('click', checkTheText);
+theInput.addEventListener('keydown', e => { if (e.key === 'Enter') checkTheText(); });
+
+function checkTheText() {
+  const word = theInput.value.trim();
+  if (word === '') {
+    theFeedback.textContent = 'Entre un mot d\'abord !';
+    return;
+  }
+  theFeedback.textContent = isPalindrome(word)
+    ? '"' + word + '" est un palindrome !'
+    : '"' + word + '" n\'est pas un palindrome.';
+}
+
+function isPalindrome(str) {
+  const cleaned  = str.toLowerCase().replace(/[\s\-]/g, '');
+  const reversed = cleaned.split('').reverse().join('');
+  return cleaned === reversed;
+}
+</script>
+
+</body>
+</html>

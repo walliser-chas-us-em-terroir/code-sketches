@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 9 — Drapeaux en mouvement — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Drapeaux en mouvement</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Trois drapeaux tricolores animés avec un effet de vague sinusoïdal.
+        Après 100 frames, la bande centrale du premier drapeau vire au noir.
+      </p>
+      <p>
+        Chaque drapeau est une instance de la classe <code>Flag</code> avec
+        un constructeur et une méthode <code>drawFlag()</code> utilisant <code>sin()</code>.
+      </p>
+      <div class="sketch-meta">Sketch 9 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let flag1, flag2, flag3;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+
+  flag1 = new Flag('gold', 'blue', 'magenta', 40, 0);
+  flag2 = new Flag('cyan', 'yellow', 'orange', 220, 0);
+  flag3 = new Flag('pink', 'purple', 'teal', 400, 0);
+}
+
+function draw() {
+  background(220);
+
+  if (frameCount > 100) { flag1.c2 = 'black'; }
+
+  flag1.drawFlag();
+  flag2.drawFlag();
+  flag3.drawFlag();
+}
+
+class Flag {
+  constructor(c1, c2, c3, x, y) {
+    this.c1 = c1;
+    this.c2 = c2;
+    this.c3 = c3;
+    this.x = x;
+    this.y = y;
+  }
+  w = 160;
+  h = 100;
+
+  drawFlag() {
+    noStroke();
+    const stripe = this.w / 3;
+    const slices = 500;
+    const sliceH = this.h / slices;
+    const amp = 8;
+    const t = frameCount * 0.05;
+    const colors = [this.c1, this.c2, this.c3];
+
+    for (let row = 0; row < slices; row++) {
+      const y = this.y + row + sliceH;
+      const offset = sin(row * 0.3 + t) * amp;
+      for (let i = 0; i < 3; i++) {
+        fill(colors[i]);
+        rect(this.x + i * stripe + offset, y, stripe, sliceH + 1);
+      }
+    }
+  }
+}
+</script>
+
+</body>
+</html>

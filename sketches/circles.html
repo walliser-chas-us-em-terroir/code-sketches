@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 1 — Cercles concentriques — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Cercles concentriques</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Des cercles de plus en plus grands se tracent depuis le centre
+        du canvas, créant un effet d'expansion infini.
+      </p>
+      <p>
+        Une variable <code>size</code> s'incrémente à chaque frame dans
+        <code>draw()</code>, agrandissant le cercle à chaque passage.
+      </p>
+      <div class="sketch-meta">Sketch 1 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+var size = 10;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+}
+
+function draw() {
+  noFill();
+  circle(200, 200, size);
+  size += 10;
+}
+</script>
+
+</body>
+</html>

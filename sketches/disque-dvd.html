@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 6 — Disque DVD — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Disque DVD</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Un disque qui rebondit sur les quatre bords du canvas en changeant
+        progressivement de couleur — inspiré du fameux économiseur d'écran DVD.
+      </p>
+      <p>
+        La couleur oscille via une variable <code>posR</code> qui s'inverse
+        à chaque limite. Appuie sur <kbd>S</kbd> pour sauvegarder une capture.
+      </p>
+      <div class="sketch-meta">Sketch 6 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let posX = 63.4;
+let posY = 3.4;
+let posR = posY * posY;
+let size = 20;
+let vitX = 4;
+let vitY = 3;
+let vitR = 20;
+
+function setup() {
+  frameRate(60);
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+}
+
+function draw() {
+  stroke(posR, 0, 255);
+  fill(posR, 4, 4);
+
+  posR += vitR;
+  if (posR >= 255 || posR <= 0) {
+    vitR = vitR * -1;
+  }
+
+  posX += vitX;
+  posY += vitY;
+
+  if (posX >= width - size || posX <= 0) {
+    vitX = vitX * -1;
+  }
+
+  if (posY >= height - size || posY <= 0) {
+    vitY = vitY * -1;
+  }
+
+  circle(posX, posY, size);
+}
+
+function keyPressed() {
+  if (key === 's') {
+    save('dessin.png');
+  }
+}
+</script>
+
+</body>
+</html>

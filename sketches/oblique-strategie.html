@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 11 — Oblique Stratégie — Mathias Udriot</title>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<main>
+  <h3>Oblique Stratégie</h3>
+  <div class="sketch-layout">
+
+    <div class="sketch-ui-wrap">
+      <p id="Strategie">...</p>
+      <button class="btn-regen" onclick="newStrategy()" title="Nouvelle stratégie">↺</button>
+    </div>
+
+    <div class="sketch-description">
+      <p>
+        Une carte tirée au hasard parmi les <em>Oblique Strategies</em> de Brian Eno
+        et Peter Schmidt (5e édition, 2001) — des conseils créatifs conçus pour
+        débloquer une impasse de travail.
+      </p>
+      <p>
+        Clique sur ↺ ou directement sur la carte pour en tirer une nouvelle.
+        Le tableau <code>Strategies[]</code> contient plus de 100 entrées chargées
+        depuis un fichier JS externe.
+      </p>
+      <div class="sketch-meta">Sketch 11 &nbsp;·&nbsp; JavaScript &nbsp;·&nbsp; 2026</div>
+    </div>
+
+  </div>
+</main>
+
+<script src="oblique-stratiges.js"></script>
+<script>
+function newStrategy() {
+  document.getElementById('Strategie').innerHTML =
+    Strategies[Math.floor(Math.random() * Strategies.length)];
+}
+document.getElementById('Strategie').addEventListener('click', newStrategy);
+window.onload = newStrategy;
+</script>
+
+</body>
+</html>
