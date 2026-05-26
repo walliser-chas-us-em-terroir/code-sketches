@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 21 — Bonus — Mathias Udriot</title>
+<link rel="stylesheet" href="../style.css" />
+<style>
+.bonus-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+  align-items: start;
+}
+
+.canvas-zone {
+  border-radius: 12px;
+  border: 2px solid #111;
+  background: #111;
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#mainCanvas {
+  max-width: 100%;
+  max-height: 70vh;
+  display: none;
+  border-radius: 10px;
+}
+
+.upload-zone {
+  padding: 60px 24px;
+  text-align: center;
+  cursor: pointer;
+  color: #aaa;
+  width: 100%;
+}
+
+.upload-zone .icon { font-size: 3rem; margin-bottom: 12px; }
+.upload-zone .label { font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 6px; }
+.upload-zone .hint  { font-size: 0.8rem; opacity: 0.45; }
+
+.status-bar {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fff;
+  border: 2px solid #111;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge {
+  background: #e82222;
+  color: #fff;
+  border-radius: 6px;
+  padding: 2px 9px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.panel {
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-section {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  opacity: 0.4;
+  margin-bottom: -6px;
+}
+
+.ctrl label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.ctrl label span { opacity: 0.55; font-weight: 600; }
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #111;
+  cursor: pointer;
+}
+
+.range-hint {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  opacity: 0.45;
+  margin-top: 3px;
+}
+
+.row2 { display: flex; gap: 8px; }
+
+.tog {
+  flex: 1;
+  padding: 9px 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: Arial, sans-serif;
+}
+
+.tog.on { background: #111; color: #fff; }
+
+.btn {
+  width: 100%;
+  padding: 13px;
+  font-family: Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #111;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.btn:hover:not(:disabled) { background: #111; color: #fff; }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.btn-red {
+  border-color: #e82222;
+  color: #e82222;
+}
+.btn-red:hover:not(:disabled) { background: #e82222; color: #fff; }
+
+hr { border: none; border-top: 1px solid #e8e8e8; margin: 0; }
+
+select {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 2px solid #111;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sketch-meta {
+  margin-top: 24px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #111;
+  text-transform: uppercase;
+  opacity: 0.45;
+}
+
+@media (max-width: 720px) {
+  .bonus-layout { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body class="sketch-page">
+
+<main>
+  <h3>Bonus — Flouteur de visages</h3>
+
+  <div class="bonus-layout">
+
+    <!-- Zone canvas -->
+    <div>
+      <div class="canvas-zone" id="canvasZone">
+        <div class="upload-zone" id="uploadZone">
+          <div class="icon">📷</div>
+          <div class="label">Déposer une image ici</div>
+          <div class="hint">PNG ou JPG · max 10 Mo</div>
+        </div>
+        <canvas id="mainCanvas"></canvas>
+      </div>
+      <div class="status-bar">
+        <span id="statusTxt">Chargement des modèles…</span>
+        <span class="badge" id="faceBadge" style="display:none"></span>
+      </div>
+    </div>
+
+    <!-- Panneau de contrôle -->
+    <div class="panel">
+
+      <div class="panel-section">Image</div>
+
+      <button class="btn" onclick="document.getElementById('fileInput').click()">Choisir une image</button>
+      <input type="file" id="fileInput" accept="image/png,image/jpeg" style="display:none" />
+
+      <hr />
+      <div class="panel-section">Détection des visages</div>
+
+      <div class="ctrl">
+        <label>Sensibilité <span><span id="sensVal">5</span> / 10</span></label>
+        <input type="range" id="sensitivity" min="0" max="10" value="5"
+               oninput="document.getElementById('sensVal').textContent=this.value" />
+        <div class="range-hint"><span>0 — off</span><span>10 — agressive</span></div>
+      </div>
+
+      <button class="btn btn-red" id="detectBtn" onclick="runDetection()" disabled>
+        Détecter les visages
+      </button>
+
+      <hr />
+      <div class="panel-section">Effet</div>
+
+      <div class="row2">
+        <button class="tog on" id="togBlur"  onclick="setMode('blur')">Flou</button>
+        <button class="tog"    id="togPixel" onclick="setMode('pixel')">Pixelisation</button>
+      </div>
+
+      <div class="ctrl">
+        <label>Force <span><span id="forceVal">50</span> / 100</span></label>
+        <input type="range" id="forceSlider" min="1" max="100" value="50"
+               oninput="document.getElementById('forceVal').textContent=this.value" />
+        <div class="range-hint"><span>1 — léger</span><span>100 — maximal</span></div>
+      </div>
+
+      <button class="btn" id="applyBtn" onclick="applyEffect()" disabled>Appliquer l'effet</button>
+      <button class="btn" id="resetBtn" onclick="resetImage()" disabled>↩ Réinitialiser</button>
+
+      <hr />
+      <div class="panel-section">Export</div>
+
+      <div class="row2">
+        <button class="tog on" id="togJpeg" onclick="setFmt('jpeg')">JPEG</button>
+        <button class="tog"    id="togPng"  onclick="setFmt('png')">PNG</button>
+      </div>
+
+      <div class="ctrl" id="qualCtrl">
+        <label>Qualité <span><span id="qualVal">92</span> %</span></label>
+        <input type="range" id="qualSlider" min="10" max="100" value="92"
+               oninput="document.getElementById('qualVal').textContent=this.value" />
+      </div>
+
+      <div class="ctrl">
+        <label>Taille (largeur max)</label>
+        <select id="sizeSelect">
+          <option value="original">Originale</option>
+          <option value="2560">2560 px</option>
+          <option value="1920">1920 px</option>
+          <option value="1280">1280 px</option>
+          <option value="800">800 px</option>
+        </select>
+      </div>
+
+      <button class="btn" id="exportBtn" onclick="exportImage()" disabled>Télécharger</button>
+
+    </div>
+  </div>
+
+  <div class="sketch-meta">Sketch 21 &nbsp;·&nbsp; face-api.js · TensorFlow.js &nbsp;·&nbsp; 2026</div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+<script>
+const canvas  = document.getElementById('mainCanvas');
+const ctx     = canvas.getContext('2d');
+const zone    = document.getElementById('canvasZone');
+const upload  = document.getElementById('uploadZone');
+
+let originalData = null;
+let detectedFaces = [];
+let effectMode  = 'blur';
+let exportFmt   = 'jpeg';
+let modelsReady = false;
+let imgEl       = new Image();
+
+async function init() {
+  try {
+    const base = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+    await faceapi.nets.tinyFaceDetector.loadFromUri(base);
+    modelsReady = true;
+    setStatus('Modèles prêts — choisissez une image.');
+  } catch(e) {
+    setStatus('Erreur réseau : modèles non chargés. Vérifiez votre connexion.');
+  }
+}
+init();
+
+upload.addEventListener('click', () => document.getElementById('fileInput').click());
+upload.addEventListener('dragover', e => e.preventDefault());
+upload.addEventListener('drop', e => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); });
+document.getElementById('fileInput').addEventListener('change', e => loadFile(e.target.files[0]));
+
+function loadFile(file) {
+  if (!file) return;
+  if (!file.type.match(/image\/(png|jpeg)/)) { setStatus('Format invalide — PNG ou JPG uniquement.'); return; }
+  if (file.size > 10 * 1024 * 1024)          { setStatus('Fichier trop lourd — max 10 Mo.');         return; }
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    imgEl = new Image();
+    imgEl.onload = () => {
+      canvas.width  = imgEl.width;
+      canvas.height = imgEl.height;
+      ctx.drawImage(imgEl, 0, 0);
+      originalData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      upload.style.display   = 'none';
+      canvas.style.display   = 'block';
+      detectedFaces = [];
+      hideBadge();
+      document.getElementById('detectBtn').disabled = !modelsReady;
+      document.getElementById('exportBtn').disabled = false;
+      document.getElementById('applyBtn').disabled  = true;
+      document.getElementById('resetBtn').disabled  = true;
+      setStatus(`Image chargée — ${imgEl.width} × ${imgEl.height} px`);
+    };
+    imgEl.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runDetection() {
+  if (!modelsReady) { setStatus('Modèles non disponibles.'); return; }
+
+  const sens = parseInt(document.getElementById('sensitivity').value);
+  if (sens === 0) {
+    detectedFaces = [];
+    ctx.putImageData(originalData, 0, 0);
+    hideBadge();
+    setStatus('Sensibilité à 0 — détection désactivée.');
+    document.getElementById('applyBtn').disabled = true;
+    return;
+  }
+
+  setStatus('Analyse en cours…');
+  const threshold = 0.88 - (sens / 10) * 0.78;
+  const opts = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: threshold, inputSize: 416 });
+  const results = await faceapi.detectAllFaces(canvas, opts);
+  detectedFaces = results.map(r => r.box);
+
+  ctx.putImageData(originalData, 0, 0);
+
+  const lw = Math.max(2, Math.round(canvas.width / 300));
+  detectedFaces.forEach(box => {
+    ctx.save();
+    ctx.strokeStyle = '#e82222';
+    ctx.lineWidth   = lw;
+    ctx.strokeRect(box.x, box.y, box.width, box.height);
+    ctx.fillStyle   = 'rgba(232,34,34,0.10)';
+    ctx.fillRect(box.x, box.y, box.width, box.height);
+    ctx.restore();
+  });
+
+  const n = detectedFaces.length;
+  document.getElementById('applyBtn').disabled = n === 0;
+  document.getElementById('resetBtn').disabled = false;
+  showBadge(n + ' visage' + (n > 1 ? 's' : '') + ' détecté' + (n > 1 ? 's' : ''));
+  setStatus(n > 0 ? `${n} visage${n>1?'s':''} trouvé${n>1?'s':''}.` : 'Aucun visage détecté — essayez une sensibilité plus haute.');
+}
+
+function applyEffect() {
+  ctx.putImageData(originalData, 0, 0);
+  const force = parseInt(document.getElementById('forceSlider').value);
+  detectedFaces.forEach(box => {
+    effectMode === 'blur' ? applyBlur(box, force) : applyPixel(box, force);
+  });
+  document.getElementById('resetBtn').disabled = false;
+  setStatus('Effet appliqué — prêt pour l\'export.');
+}
+
+function applyBlur(box, force) {
+  const px = Math.round(1 + force * 0.55);
+  const x = Math.max(0, Math.floor(box.x  - 4));
+  const y = Math.max(0, Math.floor(box.y  - 4));
+  const w = Math.min(canvas.width  - x, Math.ceil(box.width  + 8));
+  const h = Math.min(canvas.height - y, Math.ceil(box.height + 8));
+
+  const off = document.createElement('canvas');
+  off.width = canvas.width; off.height = canvas.height;
+  off.getContext('2d').putImageData(originalData, 0, 0);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  ctx.filter = `blur(${px}px)`;
+  ctx.drawImage(off, 0, 0);
+  ctx.filter = 'none';
+  ctx.restore();
+}
+
+function applyPixel(box, force) {
+  const block = Math.max(2, Math.round(2 + force * 0.38));
+  const x = Math.max(0, Math.floor(box.x));
+  const y = Math.max(0, Math.floor(box.y));
+  const w = Math.min(canvas.width  - x, Math.ceil(box.width));
+  const h = Math.min(canvas.height - y, Math.ceil(box.height));
+
+  const data = ctx.getImageData(x, y, w, h);
+  const px   = data.data;
+
+  for (let by = 0; by < h; by += block) {
+    for (let bx = 0; bx < w; bx += block) {
+      const bw = Math.min(block, w - bx);
+      const bh = Math.min(block, h - by);
+      let r=0, g=0, b=0, n=0;
+      for (let dy=0; dy<bh; dy++) for (let dx=0; dx<bw; dx++) {
+        const i = ((by+dy)*w + (bx+dx))*4;
+        r+=px[i]; g+=px[i+1]; b+=px[i+2]; n++;
+      }
+      r=r/n|0; g=g/n|0; b=b/n|0;
+      for (let dy=0; dy<bh; dy++) for (let dx=0; dx<bw; dx++) {
+        const i = ((by+dy)*w + (bx+dx))*4;
+        px[i]=r; px[i+1]=g; px[i+2]=b;
+      }
+    }
+  }
+  ctx.putImageData(data, x, y);
+}
+
+function resetImage() {
+  ctx.putImageData(originalData, 0, 0);
+  detectedFaces = [];
+  hideBadge();
+  document.getElementById('applyBtn').disabled = true;
+  document.getElementById('resetBtn').disabled = true;
+  setStatus('Image réinitialisée.');
+}
+
+function exportImage() {
+  const sizeOpt = document.getElementById('sizeSelect').value;
+  const quality = parseInt(document.getElementById('qualSlider').value) / 100;
+  let out = canvas;
+
+  if (sizeOpt !== 'original') {
+    const maxW = parseInt(sizeOpt);
+    if (canvas.width > maxW) {
+      const ratio = maxW / canvas.width;
+      out = document.createElement('canvas');
+      out.width  = maxW;
+      out.height = Math.round(canvas.height * ratio);
+      out.getContext('2d').drawImage(canvas, 0, 0, out.width, out.height);
+    }
+  }
+
+  const mime = exportFmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const ext  = exportFmt === 'jpeg' ? 'jpg' : 'png';
+  const a = document.createElement('a');
+  a.href     = out.toDataURL(mime, quality);
+  a.download = `visages-floutes.${ext}`;
+  a.click();
+  setStatus(`Exporté en ${ext.toUpperCase()} — ${out.width}×${out.height} px.`);
+}
+
+function setMode(m) {
+  effectMode = m;
+  document.getElementById('togBlur').classList.toggle('on',  m==='blur');
+  document.getElementById('togPixel').classList.toggle('on', m==='pixel');
+}
+
+function setFmt(f) {
+  exportFmt = f;
+  document.getElementById('togJpeg').classList.toggle('on', f==='jpeg');
+  document.getElementById('togPng').classList.toggle('on',  f==='png');
+  document.getElementById('qualCtrl').style.display = f==='jpeg' ? '' : 'none';
+}
+
+function setStatus(msg) { document.getElementById('statusTxt').textContent = msg; }
+function showBadge(txt) { const b=document.getElementById('faceBadge'); b.textContent=txt; b.style.display=''; }
+function hideBadge()    { document.getElementById('faceBadge').style.display='none'; }
+</script>
+
+</body>
+</html>
