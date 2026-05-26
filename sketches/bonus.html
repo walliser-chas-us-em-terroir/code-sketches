@@ -2,491 +2,739 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Sketch 21 — Bonus — Mathias Udriot</title>
-<link rel="stylesheet" href="../style.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Face Censor Pro — Mathias Udriot</title>
 <style>
-.bonus-layout {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 32px;
-  align-items: start;
+:root {
+  --bg:       #0b0b0b;
+  --s1:       #141414;
+  --s2:       #1c1c1c;
+  --border:   #252525;
+  --border2:  #333;
+  --text:     #e2e2e2;
+  --muted:    #555;
+  --muted2:   #888;
+  --red:      #e82222;
+  --red2:     #ff3a3a;
+  --green:    #22c55e;
+  --amber:    #f59e0b;
+  --panel:    288px;
 }
 
-.canvas-zone {
-  border-radius: 12px;
-  border: 2px solid #111;
-  background: #111;
-  position: relative;
-  min-height: 320px;
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system,'Helvetica Neue',Arial,sans-serif;
+  font-size: 12px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.hd {
+  height: 44px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.hd-logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.logo-pip {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 6px var(--red);
+}
+
+.hd-sep { flex: 1; }
+
+.hd-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted2);
+}
+
+.pip {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: background 0.3s, box-shadow 0.3s;
+  flex-shrink: 0;
+}
+.pip.ready  { background: var(--green); box-shadow: 0 0 5px var(--green); }
+.pip.busy   { background: var(--amber); animation: blink 0.9s infinite; }
+.pip.error  { background: var(--red); }
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.badge {
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  display: none;
+  letter-spacing: 0.02em;
+}
+
+/* ── BODY ── */
+.body { flex:1; display:flex; overflow:hidden; }
+
+/* ── CANVAS ── */
+.view {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--bg);
+  position: relative;
   overflow: hidden;
 }
 
-#mainCanvas {
-  max-width: 100%;
-  max-height: 70vh;
-  display: none;
-  border-radius: 10px;
-}
-
-.upload-zone {
-  padding: 60px 24px;
-  text-align: center;
-  cursor: pointer;
-  color: #aaa;
-  width: 100%;
-}
-
-.upload-zone .icon { font-size: 3rem; margin-bottom: 12px; }
-.upload-zone .label { font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 6px; }
-.upload-zone .hint  { font-size: 0.8rem; opacity: 0.45; }
-
-.status-bar {
-  margin-top: 10px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  padding: 10px 14px;
-  border-radius: 8px;
-  background: #fff;
-  border: 2px solid #111;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.badge {
-  background: #e82222;
-  color: #fff;
-  border-radius: 6px;
-  padding: 2px 9px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.panel {
-  background: #fff;
-  border: 2px solid #111;
-  border-radius: 12px;
-  padding: 22px;
+.drop {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.panel-section {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  opacity: 0.4;
-  margin-bottom: -6px;
-}
-
-.ctrl label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.ctrl label span { opacity: 0.55; font-weight: 600; }
-
-input[type="range"] {
-  width: 100%;
-  accent-color: #111;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
   cursor: pointer;
+  padding: 56px 48px;
+  border: 1px dashed var(--border2);
+  border-radius: 14px;
+  transition: border-color 0.2s, color 0.2s;
+  user-select: none;
+}
+.drop:hover { border-color: #444; color: var(--muted2); }
+.drop-icon { font-size: 36px; line-height: 1; }
+.drop-t { font-size: 14px; font-weight: 700; color: #777; letter-spacing: -0.02em; }
+.drop-h { font-size: 11px; }
+
+#canvas {
+  max-width: 100%;
+  max-height: 100%;
+  display: none;
+  cursor: crosshair;
 }
 
-.range-hint {
+/* ── PANEL ── */
+.panel {
+  width: var(--panel);
+  background: var(--s1);
+  border-left: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  opacity: 0.45;
-  margin-top: 3px;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.panel::-webkit-scrollbar { width: 3px; }
+.panel::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.sec {
+  padding: 14px 14px 16px;
+  border-bottom: 1px solid var(--border);
 }
 
-.row2 { display: flex; gap: 8px; }
+.sec-lbl {
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin-bottom: 11px;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--s2);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s;
+  letter-spacing: -0.01em;
+}
+.btn:hover:not(:disabled) { background: #222; border-color: #3a3a3a; }
+.btn:disabled { opacity: 0.28; cursor: not-allowed; }
+.btn-red { background: var(--red); border-color: var(--red); color: #fff; font-weight: 700; }
+.btn-red:hover:not(:disabled) { background: var(--red2); border-color: var(--red2); }
+.btn-sm { font-size: 11px; padding: 7px 10px; }
+
+.r2 { display: flex; gap: 5px; }
 
 .tog {
   flex: 1;
-  padding: 9px 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  background: #fff;
-  border: 2px solid #111;
-  border-radius: 8px;
+  padding: 7px 5px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted2);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  font-family: Arial, sans-serif;
+  transition: all 0.13s;
+  letter-spacing: -0.01em;
 }
+.tog.on { background: var(--s2); color: var(--text); border-color: var(--border2); }
 
-.tog.on { background: #111; color: #fff; }
+/* Controls */
+.ctrl { margin-bottom: 11px; }
+.ctrl:last-child { margin-bottom: 0; }
 
-.btn {
+.ctrl-lbl {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted2);
+  margin-bottom: 5px;
+}
+.ctrl-lbl strong { color: var(--text); font-weight: 600; }
+
+input[type="range"] {
   width: 100%;
-  padding: 13px;
-  font-family: Arial, sans-serif;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #111;
-  background: #fff;
-  border: 2px solid #111;
-  border-radius: 8px;
+  height: 2px;
+  accent-color: #666;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
+  margin: 0;
 }
 
-.btn:hover:not(:disabled) { background: #111; color: #fff; }
-.btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.btn-red {
-  border-color: #e82222;
-  color: #e82222;
+input[type="text"] {
+  width: 100%;
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
 }
-.btn-red:hover:not(:disabled) { background: #e82222; color: #fff; }
-
-hr { border: none; border-top: 1px solid #e8e8e8; margin: 0; }
+input[type="text"]:focus { border-color: var(--border2); }
+input[type="text"]::placeholder { color: var(--muted); }
 
 select {
   width: 100%;
-  padding: 10px 12px;
-  font-family: Arial, sans-serif;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border: 2px solid #111;
-  border-radius: 8px;
-  background: #fff;
+  padding: 7px 10px;
+  font-family: inherit;
+  font-size: 11px;
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
   cursor: pointer;
+  margin-bottom: 8px;
 }
 
-.sketch-meta {
-  margin-top: 24px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: #111;
-  text-transform: uppercase;
-  opacity: 0.45;
+/* Watermark position grid */
+.wmg {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 4px;
+  margin-bottom: 11px;
 }
+.wmg-cell {
+  aspect-ratio: 1;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.13s, border-color 0.13s;
+}
+.wmg-cell:hover { background: var(--s2); }
+.wmg-cell.on { background: var(--s2); border-color: var(--border2); }
+.wmg-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--muted); }
+.wmg-cell.on .wmg-dot { background: var(--text); }
 
-@media (max-width: 720px) {
-  .bonus-layout { grid-template-columns: 1fr; }
+/* Color swatches */
+.swatches { display: flex; gap: 5px; flex-wrap: wrap; }
+.sw {
+  width: 24px; height: 24px;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.13s;
+  flex-shrink: 0;
+}
+.sw.on { border-color: var(--muted2); }
+
+/* Footer / export */
+.export-sec {
+  padding: 14px;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
 }
 </style>
 </head>
-<body class="sketch-page">
+<body>
 
-<main>
-  <h3>Bonus — Flouteur de visages</h3>
+<!-- HEADER -->
+<div class="hd">
+  <div class="hd-logo">
+    <div class="logo-pip"></div>
+    Face Censor Pro
+  </div>
+  <div class="hd-sep"></div>
+  <div class="hd-status">
+    <div class="pip" id="pip"></div>
+    <span id="stxt">Chargement…</span>
+  </div>
+  <div class="badge" id="badge"></div>
+</div>
 
-  <div class="bonus-layout">
+<!-- BODY -->
+<div class="body">
 
-    <!-- Zone canvas -->
-    <div>
-      <div class="canvas-zone" id="canvasZone">
-        <div class="upload-zone" id="uploadZone">
-          <div class="icon">📷</div>
-          <div class="label">Déposer une image ici</div>
-          <div class="hint">PNG ou JPG · max 10 Mo</div>
-        </div>
-        <canvas id="mainCanvas"></canvas>
-      </div>
-      <div class="status-bar">
-        <span id="statusTxt">Chargement des modèles…</span>
-        <span class="badge" id="faceBadge" style="display:none"></span>
-      </div>
+  <!-- Canvas zone -->
+  <div class="view" id="view">
+    <div class="drop" id="drop">
+      <div class="drop-icon">⬡</div>
+      <div class="drop-t">Déposer une image</div>
+      <div class="drop-h">PNG ou JPG · max 10 Mo</div>
     </div>
-
-    <!-- Panneau de contrôle -->
-    <div class="panel">
-
-      <div class="panel-section">Image</div>
-
-      <button class="btn" onclick="document.getElementById('fileInput').click()">Choisir une image</button>
-      <input type="file" id="fileInput" accept="image/png,image/jpeg" style="display:none" />
-
-      <hr />
-      <div class="panel-section">Détection des visages</div>
-
-      <div class="ctrl">
-        <label>Sensibilité <span><span id="sensVal">5</span> / 10</span></label>
-        <input type="range" id="sensitivity" min="0" max="10" value="5"
-               oninput="document.getElementById('sensVal').textContent=this.value" />
-        <div class="range-hint"><span>0 — off</span><span>10 — agressive</span></div>
-      </div>
-
-      <button class="btn btn-red" id="detectBtn" onclick="runDetection()" disabled>
-        Détecter les visages
-      </button>
-
-      <hr />
-      <div class="panel-section">Effet</div>
-
-      <div class="row2">
-        <button class="tog on" id="togBlur"  onclick="setMode('blur')">Flou</button>
-        <button class="tog"    id="togPixel" onclick="setMode('pixel')">Pixelisation</button>
-      </div>
-
-      <div class="ctrl">
-        <label>Force <span><span id="forceVal">50</span> / 100</span></label>
-        <input type="range" id="forceSlider" min="1" max="100" value="50"
-               oninput="document.getElementById('forceVal').textContent=this.value" />
-        <div class="range-hint"><span>1 — léger</span><span>100 — maximal</span></div>
-      </div>
-
-      <button class="btn" id="applyBtn" onclick="applyEffect()" disabled>Appliquer l'effet</button>
-      <button class="btn" id="resetBtn" onclick="resetImage()" disabled>↩ Réinitialiser</button>
-
-      <hr />
-      <div class="panel-section">Export</div>
-
-      <div class="row2">
-        <button class="tog on" id="togJpeg" onclick="setFmt('jpeg')">JPEG</button>
-        <button class="tog"    id="togPng"  onclick="setFmt('png')">PNG</button>
-      </div>
-
-      <div class="ctrl" id="qualCtrl">
-        <label>Qualité <span><span id="qualVal">92</span> %</span></label>
-        <input type="range" id="qualSlider" min="10" max="100" value="92"
-               oninput="document.getElementById('qualVal').textContent=this.value" />
-      </div>
-
-      <div class="ctrl">
-        <label>Taille (largeur max)</label>
-        <select id="sizeSelect">
-          <option value="original">Originale</option>
-          <option value="2560">2560 px</option>
-          <option value="1920">1920 px</option>
-          <option value="1280">1280 px</option>
-          <option value="800">800 px</option>
-        </select>
-      </div>
-
-      <button class="btn" id="exportBtn" onclick="exportImage()" disabled>Télécharger</button>
-
-    </div>
+    <canvas id="canvas"></canvas>
+    <input type="file" id="fi" accept="image/png,image/jpeg" style="display:none" />
   </div>
 
-  <div class="sketch-meta">Sketch 21 &nbsp;·&nbsp; face-api.js · TensorFlow.js &nbsp;·&nbsp; 2026</div>
-</main>
+  <!-- Panel -->
+  <div class="panel">
+
+    <div class="sec">
+      <div class="sec-lbl">Image</div>
+      <button class="btn" onclick="document.getElementById('fi').click()">Ouvrir une image</button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-lbl">Censure</div>
+      <div class="r2" style="margin-bottom:11px;">
+        <button class="tog on" id="tBlur"  onclick="setMode('blur')">Flou</button>
+        <button class="tog"    id="tPixel" onclick="setMode('pixel')">Pixels</button>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-lbl"><strong>Force</strong><span id="fv">80</span> / 100</div>
+        <input type="range" id="fslider" min="1" max="100" value="80" oninput="onForce(this.value)" />
+      </div>
+      <button class="btn btn-sm" id="resetBtn" onclick="doReset()" disabled style="margin-top:6px;">↩ Réinitialiser</button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-lbl">Filigrane</div>
+
+      <div class="ctrl">
+        <div class="ctrl-lbl"><strong>Texte</strong></div>
+        <input type="text" id="wmTxt" placeholder="© 2026 Mon Studio" oninput="redraw()" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-lbl"><strong>Taille</strong><span id="wmSv">22</span>px</div>
+        <input type="range" id="wmS" min="10" max="120" value="22" oninput="wmSv.textContent=this.value;redraw()" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-lbl"><strong>Opacité</strong><span id="wmOv">70</span>%</div>
+        <input type="range" id="wmO" min="5" max="100" value="70" oninput="wmOv.textContent=this.value;redraw()" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-lbl" style="margin-bottom:7px;"><strong>Couleur</strong></div>
+        <div class="swatches">
+          <div class="sw on" style="background:#fff"     onclick="setCol('#fff',this)"></div>
+          <div class="sw"    style="background:#000"     onclick="setCol('#000',this)"></div>
+          <div class="sw"    style="background:#e82222"  onclick="setCol('#e82222',this)"></div>
+          <div class="sw"    style="background:#f59e0b"  onclick="setCol('#f59e0b',this)"></div>
+          <div class="sw"    style="background:#22c55e"  onclick="setCol('#22c55e',this)"></div>
+          <div class="sw"    style="background:#38bdf8"  onclick="setCol('#38bdf8',this)"></div>
+        </div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-lbl" style="margin-bottom:7px;"><strong>Position</strong> <span style="color:var(--muted);font-size:10px;">ou glisser sur l'image</span></div>
+        <div class="wmg">
+          <div class="wmg-cell" data-p="tl" onclick="setPos('tl',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="tc" onclick="setPos('tc',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="tr" onclick="setPos('tr',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="ml" onclick="setPos('ml',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="mc" onclick="setPos('mc',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="mr" onclick="setPos('mr',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell on" data-p="bl" onclick="setPos('bl',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="bc" onclick="setPos('bc',this)"><div class="wmg-dot"></div></div>
+          <div class="wmg-cell" data-p="br" onclick="setPos('br',this)"><div class="wmg-dot"></div></div>
+        </div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-lbl"><strong>Marge</strong><span id="wmMv">24</span>px</div>
+        <input type="range" id="wmM" min="0" max="300" value="24" oninput="wmMv.textContent=this.value;redraw()" />
+      </div>
+    </div>
+
+    <div class="export-sec">
+      <div class="sec-lbl" style="margin-bottom:10px;">Export · sans métadonnées</div>
+      <div class="r2" style="margin-bottom:8px;">
+        <button class="tog on" id="tJpeg" onclick="setFmt('jpeg')">JPEG</button>
+        <button class="tog"    id="tPng"  onclick="setFmt('png')">PNG</button>
+      </div>
+      <div class="ctrl" id="qCtrl">
+        <div class="ctrl-lbl"><strong>Qualité</strong><span id="qv">92</span>%</div>
+        <input type="range" id="qSlider" min="50" max="100" value="92" oninput="qv.textContent=this.value" />
+      </div>
+      <select id="szSel">
+        <option value="original">Taille originale</option>
+        <option value="3840">3840 px — 4K</option>
+        <option value="2560">2560 px</option>
+        <option value="1920">1920 px</option>
+        <option value="1280">1280 px</option>
+        <option value="800">800 px</option>
+      </select>
+      <button class="btn btn-red" id="expBtn" onclick="doExport()" disabled>Télécharger</button>
+    </div>
+
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
 <script>
-const canvas  = document.getElementById('mainCanvas');
-const ctx     = canvas.getContext('2d');
-const zone    = document.getElementById('canvasZone');
-const upload  = document.getElementById('uploadZone');
+const canvas  = document.getElementById('canvas');
+const ctx     = canvas.getContext('2d', { willReadFrequently: true });
+const drop    = document.getElementById('drop');
+const fi      = document.getElementById('fi');
 
-let originalData = null;
-let detectedFaces = [];
-let effectMode  = 'blur';
-let exportFmt   = 'jpeg';
-let modelsReady = false;
-let imgEl       = new Image();
+let origData    = null;
+let censoredCnv = null;
+let faces       = [];
+let mode        = 'blur';
+let fmt         = 'jpeg';
+let wmColor     = '#fff';
+let wmPos       = 'bl';
+let wmDragX     = null;
+let wmDragY     = null;
+let isDragging  = false;
+let ready       = false;
 
-async function init() {
+// ─── INIT ────────────────────────────────────────────────────────────────────
+(async () => {
   try {
-    const base = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-    await faceapi.nets.tinyFaceDetector.loadFromUri(base);
-    modelsReady = true;
-    setStatus('Modèles prêts — choisissez une image.');
+    await faceapi.nets.ssdMobilenetv1.loadFromUri(
+      'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/'
+    );
+    ready = true;
+    st('ready', 'Prêt — déposez une image');
   } catch(e) {
-    setStatus('Erreur réseau : modèles non chargés. Vérifiez votre connexion.');
+    st('error', 'Erreur réseau — connexion requise pour les modèles');
   }
-}
-init();
+})();
 
-upload.addEventListener('click', () => document.getElementById('fileInput').click());
-upload.addEventListener('dragover', e => e.preventDefault());
-upload.addEventListener('drop', e => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); });
-document.getElementById('fileInput').addEventListener('change', e => loadFile(e.target.files[0]));
+// ─── UPLOAD ──────────────────────────────────────────────────────────────────
+drop.addEventListener('click',    () => fi.click());
+drop.addEventListener('dragover', e  => e.preventDefault());
+drop.addEventListener('drop',     e  => { e.preventDefault(); load(e.dataTransfer.files[0]); });
+fi.addEventListener('change',     e  => load(e.target.files[0]));
 
-function loadFile(file) {
+function load(file) {
   if (!file) return;
-  if (!file.type.match(/image\/(png|jpeg)/)) { setStatus('Format invalide — PNG ou JPG uniquement.'); return; }
-  if (file.size > 10 * 1024 * 1024)          { setStatus('Fichier trop lourd — max 10 Mo.');         return; }
+  if (!file.type.match(/image\/(png|jpeg)/)) { st('error','Format invalide — PNG ou JPG uniquement'); return; }
+  if (file.size > 10 * 1024 * 1024)         { st('error','Fichier trop lourd — max 10 Mo');          return; }
 
-  const reader = new FileReader();
-  reader.onload = ev => {
-    imgEl = new Image();
-    imgEl.onload = () => {
-      canvas.width  = imgEl.width;
-      canvas.height = imgEl.height;
-      ctx.drawImage(imgEl, 0, 0);
-      originalData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      upload.style.display   = 'none';
-      canvas.style.display   = 'block';
-      detectedFaces = [];
-      hideBadge();
-      document.getElementById('detectBtn').disabled = !modelsReady;
-      document.getElementById('exportBtn').disabled = false;
-      document.getElementById('applyBtn').disabled  = true;
-      document.getElementById('resetBtn').disabled  = true;
-      setStatus(`Image chargée — ${imgEl.width} × ${imgEl.height} px`);
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      canvas.width  = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      origData    = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      censoredCnv = null;
+      faces       = [];
+      wmDragX = wmDragY = null;
+
+      drop.style.display   = 'none';
+      canvas.style.display = 'block';
+      document.getElementById('expBtn').disabled   = false;
+      document.getElementById('badge').style.display = 'none';
+
+      st('busy', 'Analyse des visages…');
+      setTimeout(detect, 60);
     };
-    imgEl.src = ev.target.result;
+    img.src = ev.target.result;
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(file);
 }
 
-async function runDetection() {
-  if (!modelsReady) { setStatus('Modèles non disponibles.'); return; }
-
-  const sens = parseInt(document.getElementById('sensitivity').value);
-  if (sens === 0) {
-    detectedFaces = [];
-    ctx.putImageData(originalData, 0, 0);
-    hideBadge();
-    setStatus('Sensibilité à 0 — détection désactivée.');
-    document.getElementById('applyBtn').disabled = true;
-    return;
-  }
-
-  setStatus('Analyse en cours…');
-  const threshold = 0.88 - (sens / 10) * 0.78;
-  const opts = new faceapi.TinyFaceDetectorOptions({ scoreThreshold: threshold, inputSize: 416 });
-  const results = await faceapi.detectAllFaces(canvas, opts);
-  detectedFaces = results.map(r => r.box);
-
-  ctx.putImageData(originalData, 0, 0);
-
-  const lw = Math.max(2, Math.round(canvas.width / 300));
-  detectedFaces.forEach(box => {
-    ctx.save();
-    ctx.strokeStyle = '#e82222';
-    ctx.lineWidth   = lw;
-    ctx.strokeRect(box.x, box.y, box.width, box.height);
-    ctx.fillStyle   = 'rgba(232,34,34,0.10)';
-    ctx.fillRect(box.x, box.y, box.width, box.height);
-    ctx.restore();
-  });
-
-  const n = detectedFaces.length;
-  document.getElementById('applyBtn').disabled = n === 0;
-  document.getElementById('resetBtn').disabled = false;
-  showBadge(n + ' visage' + (n > 1 ? 's' : '') + ' détecté' + (n > 1 ? 's' : ''));
-  setStatus(n > 0 ? `${n} visage${n>1?'s':''} trouvé${n>1?'s':''}.` : 'Aucun visage détecté — essayez une sensibilité plus haute.');
+// ─── DETECTION ───────────────────────────────────────────────────────────────
+async function detect() {
+  if (!ready) { st('error','Modèles non disponibles'); return; }
+  const opts = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.18 });
+  const res  = await faceapi.detectAllFaces(canvas, opts);
+  faces = res.map(r => r.box);
+  applyEffect();
 }
 
+// ─── EFFECT ──────────────────────────────────────────────────────────────────
 function applyEffect() {
-  ctx.putImageData(originalData, 0, 0);
-  const force = parseInt(document.getElementById('forceSlider').value);
-  detectedFaces.forEach(box => {
-    effectMode === 'blur' ? applyBlur(box, force) : applyPixel(box, force);
-  });
+  ctx.putImageData(origData, 0, 0);
+  const force = +document.getElementById('fslider').value;
+  faces.forEach(b => mode === 'blur' ? doBlur(b, force) : doPixel(b, force));
+
+  censoredCnv = document.createElement('canvas');
+  censoredCnv.width  = canvas.width;
+  censoredCnv.height = canvas.height;
+  censoredCnv.getContext('2d').putImageData(ctx.getImageData(0,0,canvas.width,canvas.height), 0, 0);
+
+  const n = faces.length;
+  const badge = document.getElementById('badge');
+  badge.textContent   = n + (n > 1 ? ' visages' : ' visage');
+  badge.style.display = n > 0 ? '' : 'none';
   document.getElementById('resetBtn').disabled = false;
-  setStatus('Effet appliqué — prêt pour l\'export.');
+
+  redraw();
+  st('ready', n > 0 ? `${n} visage${n>1?'s':''} censuré${n>1?'s':''}` : 'Aucun visage détecté');
 }
 
-function applyBlur(box, force) {
-  const px = Math.round(1 + force * 0.55);
-  const x = Math.max(0, Math.floor(box.x  - 4));
-  const y = Math.max(0, Math.floor(box.y  - 4));
-  const w = Math.min(canvas.width  - x, Math.ceil(box.width  + 8));
-  const h = Math.min(canvas.height - y, Math.ceil(box.height + 8));
+function faceEllipse(b) {
+  return {
+    cx: b.x + b.width  / 2,
+    cy: b.y + b.height / 2,
+    rx: (b.width  / 2) * 1.08,
+    ry: (b.height / 2) * 1.15
+  };
+}
 
+function doBlur(b, force) {
+  const blurPx = Math.round(2 + force * 0.58);
+  const { cx, cy, rx, ry } = faceEllipse(b);
   const off = document.createElement('canvas');
   off.width = canvas.width; off.height = canvas.height;
-  off.getContext('2d').putImageData(originalData, 0, 0);
-
+  off.getContext('2d').putImageData(origData, 0, 0);
   ctx.save();
   ctx.beginPath();
-  ctx.rect(x, y, w, h);
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
   ctx.clip();
-  ctx.filter = `blur(${px}px)`;
+  ctx.filter = `blur(${blurPx}px)`;
   ctx.drawImage(off, 0, 0);
   ctx.filter = 'none';
   ctx.restore();
 }
 
-function applyPixel(box, force) {
-  const block = Math.max(2, Math.round(2 + force * 0.38));
-  const x = Math.max(0, Math.floor(box.x));
-  const y = Math.max(0, Math.floor(box.y));
-  const w = Math.min(canvas.width  - x, Math.ceil(box.width));
-  const h = Math.min(canvas.height - y, Math.ceil(box.height));
+function doPixel(b, force) {
+  const blk = Math.max(2, Math.round(2 + force * 0.4));
+  const { cx, cy, rx, ry } = faceEllipse(b);
+  const x = Math.max(0, Math.floor(b.x));
+  const y = Math.max(0, Math.floor(b.y));
+  const w = Math.min(canvas.width  - x, Math.ceil(b.width));
+  const h = Math.min(canvas.height - y, Math.ceil(b.height));
 
-  const data = ctx.getImageData(x, y, w, h);
-  const px   = data.data;
+  const tmp = document.createElement('canvas');
+  tmp.width = canvas.width; tmp.height = canvas.height;
+  const tc  = tmp.getContext('2d');
+  tc.putImageData(origData, 0, 0);
 
-  for (let by = 0; by < h; by += block) {
-    for (let bx = 0; bx < w; bx += block) {
-      const bw = Math.min(block, w - bx);
-      const bh = Math.min(block, h - by);
-      let r=0, g=0, b=0, n=0;
-      for (let dy=0; dy<bh; dy++) for (let dx=0; dx<bw; dx++) {
-        const i = ((by+dy)*w + (bx+dx))*4;
-        r+=px[i]; g+=px[i+1]; b+=px[i+2]; n++;
-      }
-      r=r/n|0; g=g/n|0; b=b/n|0;
-      for (let dy=0; dy<bh; dy++) for (let dx=0; dx<bw; dx++) {
-        const i = ((by+dy)*w + (bx+dx))*4;
-        px[i]=r; px[i+1]=g; px[i+2]=b;
-      }
+  const d = tc.getImageData(x, y, w, h), pxd = d.data;
+  for (let by=0; by<h; by+=blk) for (let bx=0; bx<w; bx+=blk) {
+    const bw=Math.min(blk,w-bx), bh=Math.min(blk,h-by);
+    let r=0,g=0,b2=0,n=0;
+    for (let dy=0;dy<bh;dy++) for (let dx=0;dx<bw;dx++) {
+      const i=((by+dy)*w+(bx+dx))*4; r+=pxd[i];g+=pxd[i+1];b2+=pxd[i+2];n++;
+    }
+    r=r/n|0; g=g/n|0; b2=b2/n|0;
+    for (let dy=0;dy<bh;dy++) for (let dx=0;dx<bw;dx++) {
+      const i=((by+dy)*w+(bx+dx))*4; pxd[i]=r;pxd[i+1]=g;pxd[i+2]=b2;
     }
   }
-  ctx.putImageData(data, x, y);
+  tc.putImageData(d, x, y);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.drawImage(tmp, 0, 0);
+  ctx.restore();
 }
 
-function resetImage() {
-  ctx.putImageData(originalData, 0, 0);
-  detectedFaces = [];
-  hideBadge();
-  document.getElementById('applyBtn').disabled = true;
-  document.getElementById('resetBtn').disabled = true;
-  setStatus('Image réinitialisée.');
+function doReset() {
+  if (!origData) return;
+  ctx.putImageData(origData, 0, 0);
+  censoredCnv = null;
+  faces = [];
+  wmDragX = wmDragY = null;
+  document.getElementById('badge').style.display = 'none';
+  document.getElementById('resetBtn').disabled   = true;
+  redraw();
+  st('ready', 'Réinitialisé');
 }
 
-function exportImage() {
-  const sizeOpt = document.getElementById('sizeSelect').value;
-  const quality = parseInt(document.getElementById('qualSlider').value) / 100;
-  let out = canvas;
+// ─── WATERMARK ────────────────────────────────────────────────────────────────
+function redraw() {
+  if (!origData) return;
+  if (censoredCnv) ctx.drawImage(censoredCnv, 0, 0);
+  else ctx.putImageData(origData, 0, 0);
+  paintWm(ctx, canvas.width, canvas.height, 1);
+}
 
-  if (sizeOpt !== 'original') {
-    const maxW = parseInt(sizeOpt);
-    if (canvas.width > maxW) {
-      const ratio = maxW / canvas.width;
-      out = document.createElement('canvas');
-      out.width  = maxW;
-      out.height = Math.round(canvas.height * ratio);
-      out.getContext('2d').drawImage(canvas, 0, 0, out.width, out.height);
-    }
+function paintWm(c, W, H, scale) {
+  const txt = document.getElementById('wmTxt').value.trim();
+  if (!txt) return;
+  const sz  = Math.round(+document.getElementById('wmS').value * scale);
+  const op  = +document.getElementById('wmO').value / 100;
+  const mg  = Math.round(+document.getElementById('wmM').value * scale);
+  c.save();
+  c.globalAlpha = op;
+  c.font        = `700 ${sz}px -apple-system,'Helvetica Neue',Arial,sans-serif`;
+  c.fillStyle   = wmColor;
+  c.shadowColor = wmColor === '#000' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.55)';
+  c.shadowBlur  = Math.round(8 * scale);
+  const tw = c.measureText(txt).width;
+  let x, y;
+  if (wmDragX !== null) {
+    x = wmDragX * scale;
+    y = wmDragY * scale;
+  } else {
+    const P = {
+      tl:[mg, mg+sz],       tc:[W/2-tw/2, mg+sz],      tr:[W-mg-tw, mg+sz],
+      ml:[mg, H/2+sz*0.35], mc:[W/2-tw/2, H/2+sz*0.35],mr:[W-mg-tw, H/2+sz*0.35],
+      bl:[mg, H-mg],        bc:[W/2-tw/2, H-mg],        br:[W-mg-tw, H-mg],
+    };
+    [x,y] = P[wmPos] || P.bl;
   }
-
-  const mime = exportFmt === 'jpeg' ? 'image/jpeg' : 'image/png';
-  const ext  = exportFmt === 'jpeg' ? 'jpg' : 'png';
-  const a = document.createElement('a');
-  a.href     = out.toDataURL(mime, quality);
-  a.download = `visages-floutes.${ext}`;
-  a.click();
-  setStatus(`Exporté en ${ext.toUpperCase()} — ${out.width}×${out.height} px.`);
+  c.fillText(txt, x, y);
+  c.restore();
 }
 
+// Watermark drag on canvas
+canvas.addEventListener('mousedown', e => {
+  if (!origData || !document.getElementById('wmTxt').value.trim()) return;
+  isDragging = true;
+  document.querySelectorAll('.wmg-cell').forEach(el => el.classList.remove('on'));
+  wmPos = 'custom';
+  updateWmDrag(e);
+});
+canvas.addEventListener('mousemove', e => { if (isDragging) updateWmDrag(e); });
+canvas.addEventListener('mouseup',   () => { isDragging = false; });
+canvas.addEventListener('mouseleave',() => { isDragging = false; });
+
+function updateWmDrag(e) {
+  const r = canvas.getBoundingClientRect();
+  const sx = canvas.width  / r.width;
+  const sy = canvas.height / r.height;
+  wmDragX = (e.clientX - r.left) * sx;
+  wmDragY = (e.clientY - r.top)  * sy;
+  redraw();
+}
+
+// ─── CONTROLS ─────────────────────────────────────────────────────────────────
 function setMode(m) {
-  effectMode = m;
-  document.getElementById('togBlur').classList.toggle('on',  m==='blur');
-  document.getElementById('togPixel').classList.toggle('on', m==='pixel');
+  mode = m;
+  document.getElementById('tBlur').classList.toggle('on',  m==='blur');
+  document.getElementById('tPixel').classList.toggle('on', m==='pixel');
+  if (origData) applyEffect();
+}
+
+function onForce(v) {
+  document.getElementById('fv').textContent = v;
+  if (origData) applyEffect();
+}
+
+function setCol(c, el) {
+  wmColor = c;
+  document.querySelectorAll('.sw').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  redraw();
+}
+
+function setPos(p, el) {
+  wmPos = p; wmDragX = wmDragY = null;
+  document.querySelectorAll('.wmg-cell').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  redraw();
 }
 
 function setFmt(f) {
-  exportFmt = f;
-  document.getElementById('togJpeg').classList.toggle('on', f==='jpeg');
-  document.getElementById('togPng').classList.toggle('on',  f==='png');
-  document.getElementById('qualCtrl').style.display = f==='jpeg' ? '' : 'none';
+  fmt = f;
+  document.getElementById('tJpeg').classList.toggle('on', f==='jpeg');
+  document.getElementById('tPng').classList.toggle('on',  f==='png');
+  document.getElementById('qCtrl').style.display = f==='jpeg' ? '' : 'none';
 }
 
-function setStatus(msg) { document.getElementById('statusTxt').textContent = msg; }
-function showBadge(txt) { const b=document.getElementById('faceBadge'); b.textContent=txt; b.style.display=''; }
-function hideBadge()    { document.getElementById('faceBadge').style.display='none'; }
-</script>
+// ─── EXPORT — zéro métadonnée ─────────────────────────────────────────────────
+function doExport() {
+  const sizeOpt = document.getElementById('szSel').value;
+  const quality = +document.getElementById('qSlider').value / 100;
+  const srcW = canvas.width, srcH = canvas.height;
+  let outW = srcW, outH = srcH;
 
+  if (sizeOpt !== 'original' && srcW > +sizeOpt) {
+    outW = +sizeOpt;
+    outH = Math.round(srcH * (outW / srcW));
+  }
+
+  const scale = outW / srcW;
+
+  // Nouveau canvas vierge = aucune métadonnée (EXIF/XMP/IPTC/ICC)
+  const out  = document.createElement('canvas');
+  out.width  = outW;
+  out.height = outH;
+  const oc   = out.getContext('2d');
+
+  if (censoredCnv) {
+    oc.drawImage(censoredCnv, 0, 0, outW, outH);
+  } else if (origData) {
+    const tmp = document.createElement('canvas');
+    tmp.width = srcW; tmp.height = srcH;
+    tmp.getContext('2d').putImageData(origData, 0, 0);
+    oc.drawImage(tmp, 0, 0, outW, outH);
+  }
+
+  paintWm(oc, outW, outH, scale);
+
+  // Nom de fichier aléatoire — aucune trace
+  const id   = crypto.getRandomValues(new Uint8Array(6)).reduce((a,b)=>a+b.toString(16).padStart(2,'0'),'').toUpperCase();
+  const mime = fmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const ext  = fmt === 'jpeg' ? 'jpg' : 'png';
+  const a    = document.createElement('a');
+  a.href     = out.toDataURL(mime, quality);
+  a.download = `${id}.${ext}`;
+  a.click();
+
+  st('ready', `Exporté · ${outW}×${outH}px · métadonnées effacées`);
+}
+
+// ─── STATUS ───────────────────────────────────────────────────────────────────
+function st(state, msg) {
+  const p = document.getElementById('pip');
+  p.className = 'pip' + (state ? ' ' + state : '');
+  document.getElementById('stxt').textContent = msg;
+}
+</script>
 </body>
 </html>
