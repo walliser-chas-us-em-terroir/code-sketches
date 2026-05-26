@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 14 — Schotter — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Schotter</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Re-création de l'œuvre algorithmique <em>Schotter</em> (1968) de Georg Nees.
+        Une grille de 12×22 carrés passe progressivement de l'ordre parfait
+        en haut vers le chaos en bas.
+      </p>
+      <p>
+        La rotation et le déplacement de chaque carré augmentent proportionnellement
+        à sa position verticale. Cliquer re-génère une nouvelle variation aléatoire.
+      </p>
+      <div class="sketch-meta">Sketch 14 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  noLoop();
+  generate();
+}
+
+function generate() {
+  background(255);
+  stroke(0);
+  strokeWeight(1);
+  noFill();
+
+  let cols = 12;
+  let rows = 22;
+  let sz = 17;
+  let marginX = (width - cols * sz) / 2;
+  let marginY = (height - rows * sz) / 2;
+
+  for (let row = 0; row < rows; row++) {
+    let t = row / (rows - 1);
+    for (let col = 0; col < cols; col++) {
+      let cx = marginX + col * sz + sz / 2;
+      let cy = marginY + row * sz + sz / 2;
+      let dx = random(-t * 6, t * 6);
+      let dy = random(-t * 6, t * 6);
+      let a = random(-t * HALF_PI, t * HALF_PI);
+      push();
+      translate(cx + dx, cy + dy);
+      rotate(a);
+      rectMode(CENTER);
+      rect(0, 0, sz - 2, sz - 2);
+      pop();
+    }
+  }
+}
+
+function mousePressed() {
+  generate();
+}
+
+function draw() {}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 20 — Yeux — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Yeux</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Deux yeux dont les pupilles suivent la position du curseur.
+        Chaque pupille est contrainte à rester à l'intérieur de l'iris
+        grâce à <code>dist()</code> et <code>atan2()</code>.
+      </p>
+      <p>
+        Un reflet fixe sur chaque pupille accentue l'impression de volume.
+        Déplacer la souris hors du canvas fait regarder les yeux vers le bord.
+      </p>
+      <div class="sketch-meta">Sketch 20 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+}
+
+function draw() {
+  background(235);
+  drawEye(130, 200);
+  drawEye(270, 200);
+}
+
+function drawEye(cx, cy) {
+  let irisR = 54;
+  let pupilR = 20;
+
+  fill(255);
+  stroke(40);
+  strokeWeight(2);
+  ellipse(cx, cy, irisR * 2, irisR * 2);
+
+  let dx = mouseX - cx;
+  let dy = mouseY - cy;
+  let d = min(sqrt(dx * dx + dy * dy), irisR - pupilR);
+  let a = atan2(dy, dx);
+  let px = cx + cos(a) * d;
+  let py = cy + sin(a) * d;
+
+  fill(25);
+  noStroke();
+  ellipse(px, py, pupilR * 2, pupilR * 2);
+
+  fill(255);
+  ellipse(px + pupilR * 0.3, py - pupilR * 0.35, pupilR * 0.38, pupilR * 0.38);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 19 — Étoile — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Étoile</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Une étoile régulière tracée avec <code>sin()</code> et <code>cos()</code>
+        en alternant rayons longs et courts pour former les pointes.
+        La position X de la souris contrôle le nombre de branches (3 à 12).
+      </p>
+      <p>
+        L'étoile tourne lentement en continu grâce à une variable d'angle
+        incrémentée à chaque frame dans <code>draw()</code>.
+      </p>
+      <div class="sketch-meta">Sketch 19 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let angle = 0;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+}
+
+function draw() {
+  background(12, 12, 28);
+
+  let pts = floor(map(mouseX, 0, width, 3, 13));
+  let outerR = 155;
+  let innerR = 65;
+
+  translate(200, 200);
+  rotate(angle);
+
+  stroke(220, 185, 60);
+  strokeWeight(1.5);
+  fill(255, 210, 80, 190);
+
+  beginShape();
+  for (let i = 0; i < pts * 2; i++) {
+    let r = (i % 2 === 0) ? outerR : innerR;
+    let a = (TWO_PI / (pts * 2)) * i - HALF_PI;
+    vertex(cos(a) * r, sin(a) * r);
+  }
+  endShape(CLOSE);
+
+  angle += 0.005;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 13 — Phyllotaxis — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Phyllotaxis</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Chaque point est positionné selon l'angle d'or (~137.5°) et une
+        distance proportionnelle à la racine carrée de son index. Ce schéma
+        naturel apparaît dans les graines de tournesol et les pommes de pin.
+      </p>
+      <p>
+        La couleur varie en mode HSB en fonction de l'angle de placement.
+        Cliquer sur le canvas relance l'animation depuis zéro.
+      </p>
+      <div class="sketch-meta">Sketch 13 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let n = 0;
+const golden = 137.508;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  colorMode(HSB, 360, 100, 100, 100);
+  background(0, 0, 10);
+  noStroke();
+}
+
+function draw() {
+  if (n > 850) return;
+  let angle = n * radians(golden);
+  let r = sqrt(n) * 11.5;
+  let x = 200 + r * cos(angle);
+  let y = 200 + r * sin(angle);
+  fill((n * 1.8) % 360, 75, 90, 95);
+  circle(x, y, 7);
+  n++;
+}
+
+function mousePressed() {
+  n = 0;
+  background(0, 0, 10);
+}
+</script>
+
+</body>
+</html>

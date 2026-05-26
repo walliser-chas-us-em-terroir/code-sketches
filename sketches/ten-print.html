@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 18 — 10 PRINT — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>10 PRINT</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Inspiré du programme Commodore 64 d'une seule ligne :
+        <code>10 PRINT CHR$(205.5+RND(1)); : GOTO 10</code>.
+        Chaque cellule de la grille reçoit aléatoirement une diagonale
+        <em>/</em> ou <em>\</em>.
+      </p>
+      <p>
+        Le résultat crée l'illusion d'un labyrinthe. Cliquer re-génère
+        un nouveau motif.
+      </p>
+      <div class="sketch-meta">Sketch 18 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let sz = 20;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  noLoop();
+  generate();
+}
+
+function generate() {
+  background(15);
+  stroke(255);
+  strokeWeight(1.5);
+  for (let y = 0; y < height; y += sz) {
+    for (let x = 0; x < width; x += sz) {
+      if (random() < 0.5) {
+        line(x, y, x + sz, y + sz);
+      } else {
+        line(x + sz, y, x, y + sz);
+      }
+    }
+  }
+}
+
+function mousePressed() {
+  generate();
+}
+
+function draw() {}
+</script>
+
+</body>
+</html>

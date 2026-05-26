@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 17 — Ronds dans l'eau — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Ronds dans l'eau</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Chaque clic crée des ondes circulaires qui se propagent et s'estompent
+        progressivement. Plusieurs ondes coexistent simultanément, se superposant
+        comme de vraies perturbations à la surface de l'eau.
+      </p>
+      <p>
+        Les ondes sont modélisées par un tableau d'objets, chacun gérant son
+        propre rayon, sa vitesse et son opacité.
+      </p>
+      <div class="sketch-meta">Sketch 17 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let ripples = [];
+
+class Ripple {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.r = 2;
+    this.alpha = 220;
+    this.speed = random(1.2, 2.8);
+    this.col = [random(80, 160), random(160, 220), random(210, 255)];
+  }
+
+  update() {
+    this.r += this.speed;
+    this.alpha -= 2.8;
+  }
+
+  draw() {
+    noFill();
+    stroke(this.col[0], this.col[1], this.col[2], this.alpha);
+    strokeWeight(1.5);
+    circle(this.x, this.y, this.r * 2);
+  }
+
+  isDead() {
+    return this.alpha <= 0;
+  }
+}
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  background(8, 18, 38);
+}
+
+function draw() {
+  background(8, 18, 38, 18);
+  for (let i = ripples.length - 1; i >= 0; i--) {
+    ripples[i].update();
+    ripples[i].draw();
+    if (ripples[i].isDead()) ripples.splice(i, 1);
+  }
+}
+
+function mousePressed() {
+  for (let i = 0; i < 4; i++) {
+    ripples.push(new Ripple(mouseX, mouseY));
+  }
+}
+</script>
+
+</body>
+</html>

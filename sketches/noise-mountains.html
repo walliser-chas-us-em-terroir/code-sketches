@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Sketch 16 — Montagnes — Mathias Udriot</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<link rel="stylesheet" href="../style.css" />
+</head>
+<body class="sketch-page">
+
+<!-- ── MAIN ── -->
+<main>
+  <h3>Montagnes</h3>
+  <div class="sketch-layout">
+    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-description">
+      <p>
+        Quatre couches de montagnes générées par la fonction <code>noise()</code>
+        de Perlin. Chaque couche utilise une fréquence et une amplitude différentes,
+        créant une illusion de profondeur atmosphérique.
+      </p>
+      <p>
+        Les teintes s'éclaircissent avec la distance, simulant la brume.
+        Cliquer re-génère un nouveau paysage.
+      </p>
+      <div class="sketch-meta">Sketch 16 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
+    </div>
+  </div>
+</main>
+
+<!-- ── P5.JS ── -->
+<script>
+let seed = 0;
+
+function setup() {
+  let cnv = createCanvas(400, 400);
+  cnv.parent('canvas-container');
+  noLoop();
+  generate();
+}
+
+function generate() {
+  background(18, 28, 55);
+
+  for (let y = 0; y <= 120; y++) {
+    let t = y / 120;
+    let c = lerpColor(color(18, 28, 55), color(80, 110, 175), t);
+    stroke(c);
+    line(0, y, width, y);
+  }
+
+  let layers = [
+    { base: 330, scale: 0.006, amp: 90,  col: color(40, 50, 70)   },
+    { base: 290, scale: 0.010, amp: 75,  col: color(65, 80, 100)  },
+    { base: 250, scale: 0.016, amp: 60,  col: color(95, 115, 125) },
+    { base: 210, scale: 0.024, amp: 50,  col: color(135, 155, 150) }
+  ];
+
+  for (let i = 0; i < layers.length; i++) {
+    let l = layers[i];
+    fill(l.col);
+    noStroke();
+    beginShape();
+    vertex(0, height);
+    for (let x = 0; x <= width; x++) {
+      let n = noise(x * l.scale + seed + i * 100);
+      let y = l.base - n * l.amp;
+      vertex(x, y);
+    }
+    vertex(width, height);
+    endShape(CLOSE);
+  }
+}
+
+function mousePressed() {
+  seed = random(1000);
+  generate();
+}
+
+function draw() {}
+</script>
+
+</body>
+</html>
