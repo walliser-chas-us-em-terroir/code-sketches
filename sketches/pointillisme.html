@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Sketch 13 — Phyllotaxis — Mathias Udriot</title>
+<title>Sketch 13 — Pointillisme — Mathias Udriot</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 <link rel="stylesheet" href="../style.css" />
 </head>
@@ -11,9 +11,11 @@
 
 <!-- ── MAIN ── -->
 <main>
-  <h3>Phyllotaxis</h3>
+  <h3>Pointillisme</h3>
   <div class="sketch-layout">
-    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-canvas-wrap" id="canvas-container">
+      <button class="btn-regen" onclick="restart()" title="Relancer">↺</button>
+    </div>
     <div class="sketch-description">
       <p>
         Chaque point est positionné selon l'angle d'or (~137.5°) et une
@@ -22,7 +24,7 @@
       </p>
       <p>
         La couleur varie en mode HSB en fonction de l'angle de placement.
-        Cliquer sur le canvas relance l'animation depuis zéro.
+        Le bouton ↺ relance l'animation depuis zéro.
       </p>
       <div class="sketch-meta">Sketch 13 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
     </div>
@@ -53,7 +55,7 @@ function draw() {
   n++;
 }
 
-function mousePressed() {
+function restart() {
   n = 0;
   background(0, 0, 10);
 }

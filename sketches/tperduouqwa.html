@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Sketch 18 — 10 PRINT — Mathias Udriot</title>
+<title>Sketch 18 — Tperduouqwa — Mathias Udriot</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 <link rel="stylesheet" href="../style.css" />
 </head>
@@ -11,9 +11,11 @@
 
 <!-- ── MAIN ── -->
 <main>
-  <h3>10 PRINT</h3>
+  <h3>Tperduouqwa</h3>
   <div class="sketch-layout">
-    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-canvas-wrap" id="canvas-container">
+      <button class="btn-regen" onclick="generate()" title="Relancer">↺</button>
+    </div>
     <div class="sketch-description">
       <p>
         Inspiré du programme Commodore 64 d'une seule ligne :
@@ -22,7 +24,7 @@
         <em>/</em> ou <em>\</em>.
       </p>
       <p>
-        Le résultat crée l'illusion d'un labyrinthe. Cliquer re-génère
+        Le résultat crée l'illusion d'un labyrinthe. Le bouton ↺ génère
         un nouveau motif.
       </p>
       <div class="sketch-meta">Sketch 18 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
@@ -54,10 +56,6 @@ function generate() {
       }
     }
   }
-}
-
-function mousePressed() {
-  generate();
 }
 
 function draw() {}

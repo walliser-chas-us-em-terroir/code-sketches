@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Sketch 14 — Schotter — Mathias Udriot</title>
+<title>Sketch 14 — Destructor — Mathias Udriot</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 <link rel="stylesheet" href="../style.css" />
 </head>
@@ -11,9 +11,11 @@
 
 <!-- ── MAIN ── -->
 <main>
-  <h3>Schotter</h3>
+  <h3>Destructor</h3>
   <div class="sketch-layout">
-    <div class="sketch-canvas-wrap" id="canvas-container"></div>
+    <div class="sketch-canvas-wrap" id="canvas-container">
+      <button class="btn-regen" onclick="generate()" title="Relancer">↺</button>
+    </div>
     <div class="sketch-description">
       <p>
         Re-création de l'œuvre algorithmique <em>Schotter</em> (1968) de Georg Nees.
@@ -22,7 +24,7 @@
       </p>
       <p>
         La rotation et le déplacement de chaque carré augmentent proportionnellement
-        à sa position verticale. Cliquer re-génère une nouvelle variation aléatoire.
+        à sa position verticale. Le bouton ↺ génère une nouvelle variation.
       </p>
       <div class="sketch-meta">Sketch 14 &nbsp;·&nbsp; p5.js &nbsp;·&nbsp; 2026</div>
     </div>
@@ -66,10 +68,6 @@ function generate() {
       pop();
     }
   }
-}
-
-function mousePressed() {
-  generate();
 }
 
 function draw() {}
