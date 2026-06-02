@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Face Censor Pro</title>
+<style>
+:root {
+  --bg:     #0b0b0b;
+  --s1:     #131313;
+  --s2:     #1a1a1a;
+  --bd:     #232323;
+  --bd2:    #303030;
+  --tx:     #dedede;
+  --mu:     #888;
+  --mu2:    #555;
+  --red:    #e82222;
+  --green:  #22c55e;
+  --amber:  #f59e0b;
+  --panel:  260px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: -apple-system,'Helvetica Neue',Arial,sans-serif;
+  font-size: 12px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.hd {
+  height: 42px;
+  background: var(--s1);
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.logo {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pip {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--mu2);
+  transition: background .3s, box-shadow .3s;
+  flex-shrink: 0;
+}
+.pip.on    { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.pip.busy  { background: var(--amber); animation: bl .8s infinite; }
+.pip.err   { background: var(--red);   box-shadow: 0 0 6px var(--red); }
+@keyframes bl { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.hd-mid { flex:1; font-size:11px; color:var(--mu); }
+.badge  {
+  background: var(--red);
+  color:#fff; font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:20px; display:none;
+}
+
+.srv-btn {
+  padding: 5px 12px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--bd2);
+  background: var(--s2);
+  color: var(--mu);
+  cursor: pointer;
+  transition: all .15s;
+  letter-spacing: 0.02em;
+}
+.srv-btn:hover { background: #222; color: var(--tx); border-color: #3a3a3a; }
+.srv-btn.on    { border-color: var(--green); color: var(--green); }
+
+/* ── LAYOUT ── */
+.body { flex:1; display:flex; overflow:hidden; }
+
+.view {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+
+.drop {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  color:var(--mu2); cursor:pointer;
+  padding:50px 40px;
+  border:1px dashed var(--bd2); border-radius:12px;
+  transition:border-color .2s, color .2s;
+  user-select:none;
+}
+.drop:hover { border-color:#3a3a3a; color:var(--mu); }
+.drop-i  { font-size:32px; line-height:1; }
+.drop-t  { font-size:13px; font-weight:700; color:#666; letter-spacing:-.02em; }
+.drop-h  { font-size:11px; }
+
+#cv { max-width:100%; max-height:100%; display:none; cursor:crosshair; }
+
+/* ── PANEL ── */
+.panel {
+  width: var(--panel);
+  background: var(--s1);
+  border-left: 1px solid var(--bd);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.panel::-webkit-scrollbar { width:3px; }
+.panel::-webkit-scrollbar-thumb { background:var(--bd2); border-radius:2px; }
+
+.sec { padding:12px; border-bottom:1px solid var(--bd); }
+.lbl {
+  font-size:9px; font-weight:800;
+  text-transform:uppercase; letter-spacing:.14em;
+  color:var(--mu2); margin-bottom:10px;
+}
+
+.btn {
+  width:100%; padding:9px 11px;
+  font-family:inherit; font-size:12px; font-weight:600;
+  border-radius:6px; border:1px solid var(--bd2);
+  background:var(--s2); color:var(--tx);
+  cursor:pointer; transition:background .13s, border-color .13s;
+}
+.btn:hover:not(:disabled) { background:#1f1f1f; border-color:#3a3a3a; }
+.btn:disabled { opacity:.28; cursor:not-allowed; }
+.btn-red { background:var(--red); border-color:var(--red); color:#fff; font-weight:700; }
+.btn-red:hover:not(:disabled) { background:#f53232; border-color:#f53232; }
+
+.r2 { display:flex; gap:5px; }
+.tog {
+  flex:1; padding:7px 4px;
+  font-family:inherit; font-size:11px; font-weight:600;
+  border-radius:6px; border:1px solid var(--bd);
+  background:transparent; color:var(--mu);
+  cursor:pointer; transition:all .13s;
+}
+.tog.on { background:var(--s2); color:var(--tx); border-color:var(--bd2); }
+
+.ctrl { margin-bottom:10px; }
+.ctrl:last-child { margin-bottom:0; }
+.ctrl-l {
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11px; color:var(--mu); margin-bottom:5px;
+}
+.ctrl-l strong { color:var(--tx); font-weight:600; }
+input[type="range"] { width:100%; height:2px; accent-color:#555; cursor:pointer; }
+
+/* Watermark PNG upload zone */
+.wm-upload {
+  border:1px dashed var(--bd2); border-radius:6px;
+  padding:12px; text-align:center; cursor:pointer;
+  color:var(--mu2); font-size:11px;
+  transition:border-color .15s; margin-bottom:10px;
+}
+.wm-upload:hover { border-color:#3a3a3a; color:var(--mu); }
+.wm-upload img { max-height:40px; max-width:100%; border-radius:4px; }
+
+/* 3x3 grid */
+.g9 { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; margin-bottom:10px; }
+.g9-c {
+  aspect-ratio:1;
+  border:1px solid var(--bd); border-radius:5px;
+  background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .13s;
+}
+.g9-c:hover { background:var(--s2); }
+.g9-c.on { background:var(--s2); border-color:var(--bd2); }
+.g9-c .d { width:4px; height:4px; border-radius:50%; background:var(--mu2); }
+.g9-c.on .d { background:var(--tx); }
+
+select {
+  width:100%; padding:7px 9px;
+  font-family:inherit; font-size:11px;
+  background:var(--s2); border:1px solid var(--bd);
+  border-radius:6px; color:var(--tx); cursor:pointer;
+  margin-bottom:7px;
+}
+
+.xsec { padding:12px; margin-top:auto; border-top:1px solid var(--bd); }
+
+/* Server instructions overlay */
+.modal-bg {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,.75);
+  display:none; align-items:center; justify-content:center;
+  z-index:999;
+}
+.modal-bg.open { display:flex; }
+.modal {
+  background:var(--s1); border:1px solid var(--bd2);
+  border-radius:12px; padding:24px; max-width:400px; width:90%;
+}
+.modal h4 { font-size:14px; font-weight:700; margin-bottom:14px; }
+.modal p  { color:var(--mu); line-height:1.7; margin-bottom:12px; font-size:11px; }
+.cmd-box {
+  background:var(--bg); border:1px solid var(--bd2);
+  border-radius:6px; padding:10px 12px;
+  font-family:monospace; font-size:11px; color:var(--green);
+  margin-bottom:12px; word-break:break-all;
+}
+.modal-close {
+  width:100%; padding:9px; font-family:inherit; font-size:12px;
+  font-weight:700; border-radius:6px; border:1px solid var(--bd2);
+  background:var(--s2); color:var(--tx); cursor:pointer;
+  transition:background .13s;
+}
+.modal-close:hover { background:#222; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hd">
+  <div class="logo">
+    <div class="pip" id="pip"></div>
+    Face Censor Pro
+  </div>
+  <div class="hd-mid" id="stxt">En attente du serveur…</div>
+  <div class="badge" id="badge"></div>
+  <button class="srv-btn" id="srvBtn" onclick="checkServer()">Démarrer le serveur</button>
+</div>
+
+<!-- BODY -->
+<div class="body">
+
+  <!-- Canvas -->
+  <div class="view">
+    <div class="drop" id="drop">
+      <div class="drop-i">⬡</div>
+      <div class="drop-t">Déposer une image</div>
+      <div class="drop-h">PNG ou JPG · max 50 Mo</div>
+    </div>
+    <canvas id="cv"></canvas>
+    <input type="file" id="fi" accept="image/png,image/jpeg" style="display:none" />
+  </div>
+
+  <!-- Panel -->
+  <div class="panel">
+
+    <div class="sec">
+      <div class="lbl">Détection</div>
+      <div class="ctrl">
+        <div class="ctrl-l"><strong>Sensibilité</strong><span id="sensV">7</span> / 10</div>
+        <input type="range" id="sens" min="1" max="10" value="7"
+               oninput="document.getElementById('sensV').textContent=this.value" />
+      </div>
+      <button class="btn" id="detectBtn" onclick="doDetect()" disabled style="margin-top:4px;">Analyser l'image</button>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">Effet</div>
+      <div class="r2" style="margin-bottom:10px;">
+        <button class="tog on" id="tBlur"  onclick="setMode('blur')">Flou</button>
+        <button class="tog"    id="tPixel" onclick="setMode('pixel')">Pixels</button>
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-l"><strong>Force</strong><span id="forceV">80</span> / 100</div>
+        <input type="range" id="force" min="1" max="100" value="80"
+               oninput="forceV.textContent=this.value; if(origData) doEffect()" />
+      </div>
+      <button class="btn" id="resetBtn" onclick="doReset()" disabled style="margin-top:4px;">↩ Réinitialiser</button>
+    </div>
+
+    <div class="sec">
+      <div class="lbl">Filigrane PNG</div>
+      <div class="wm-upload" id="wmZone" onclick="document.getElementById('wmFi').click()">
+        <span id="wmHint">Cliquer pour importer un .png</span>
+      </div>
+      <input type="file" id="wmFi" accept="image/png" style="display:none" />
+
+      <div class="ctrl">
+        <div class="ctrl-l"><strong>Taille</strong><span id="wmSv">18</span>%</div>
+        <input type="range" id="wmS" min="2" max="60" value="18"
+               oninput="wmSv.textContent=this.value; redraw()" />
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-l"><strong>Opacité</strong><span id="wmOv">75</span>%</div>
+        <input type="range" id="wmO" min="5" max="100" value="75"
+               oninput="wmOv.textContent=this.value; redraw()" />
+      </div>
+
+      <div class="g9" id="g9">
+        <div class="g9-c" data-p="tl" onclick="setPos('tl',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="tc" onclick="setPos('tc',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="tr" onclick="setPos('tr',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="ml" onclick="setPos('ml',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="mc" onclick="setPos('mc',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="mr" onclick="setPos('mr',this)"><div class="d"></div></div>
+        <div class="g9-c on" data-p="br" onclick="setPos('br',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="bc" onclick="setPos('bc',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="br2" onclick="setPos('br',this)"><div class="d"></div></div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-l"><strong>Marge</strong><span id="wmMv">20</span>px</div>
+        <input type="range" id="wmM" min="0" max="200" value="20"
+               oninput="wmMv.textContent=this.value; redraw()" />
+      </div>
+    </div>
+
+    <div class="xsec">
+      <div class="lbl" style="margin-bottom:9px;">Export · sans métadonnées</div>
+      <div class="r2" style="margin-bottom:8px;">
+        <button class="tog on" id="tJpeg" onclick="setFmt('jpeg')">JPEG</button>
+        <button class="tog"    id="tPng"  onclick="setFmt('png')">PNG</button>
+      </div>
+      <div class="ctrl" id="qCtrl">
+        <div class="ctrl-l"><strong>Qualité</strong><span id="qv">92</span>%</div>
+        <input type="range" id="qSlider" min="50" max="100" value="92"
+               oninput="qv.textContent=this.value" />
+      </div>
+      <select id="szSel">
+        <option value="original">Taille originale</option>
+        <option value="3840">3840 px — 4K</option>
+        <option value="2560">2560 px</option>
+        <option value="1920">1920 px</option>
+        <option value="1280">1280 px</option>
+      </select>
+      <button class="btn btn-red" id="expBtn" onclick="doExport()" disabled>Télécharger</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Server instructions modal -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h4>Démarrer le serveur de détection</h4>
+    <p>Le serveur Python fait tourner InsightFace (RetinaFace) — le modèle le plus puissant disponible localement, capable de détecter 200+ visages dans une tribune.</p>
+    <p><strong>Option 1</strong> — Double-cliquez ce fichier dans le Finder :</p>
+    <div class="cmd-box">face-censor-pro / lancer-serveur.command</div>
+    <p><strong>Option 2</strong> — Dans le Terminal :</p>
+    <div class="cmd-box" id="cmdBox"></div>
+    <button class="modal-close" onclick="closeModal()">Fermer</button>
+  </div>
+</div>
+
+<script>
+const cv  = document.getElementById('cv');
+const ctx = cv.getContext('2d', { willReadFrequently: true });
+
+let origData    = null;
+let censoredCnv = null;
+let faces       = [];
+let mode        = 'blur';
+let fmt         = 'jpeg';
+let wmImg       = null;
+let wmPos       = 'br';
+let wmDragX     = null;
+let wmDragY     = null;
+let isDrag      = false;
+let serverOk    = false;
+
+const SERVER = 'http://localhost:8765';
+
+// ── SERVER ────────────────────────────────────────────────────────────────────
+async function checkServer() {
+  st('busy', 'Vérification du serveur…');
+  try {
+    const r = await fetch(`${SERVER}/status`, { signal: AbortSignal.timeout(3000) });
+    const j = await r.json();
+    if (j.ok) {
+      serverOk = true;
+      st('on', `Serveur actif — ${j.model}`);
+      document.getElementById('srvBtn').classList.add('on');
+      document.getElementById('srvBtn').textContent = '● Serveur actif';
+      if (origData) document.getElementById('detectBtn').disabled = false;
+    }
+  } catch {
+    serverOk = false;
+    st('err', 'Serveur introuvable');
+    showModal();
+  }
+}
+
+function showModal() {
+  const dir = window.location.href.replace(/\/[^/]*$/, '');
+  document.getElementById('cmdBox').textContent =
+    `cd "${dir.replace('file://','')}"\npython3 server.py`;
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+
+// Ping toutes les 5 secondes
+setInterval(async () => {
+  if (serverOk) return;
+  try {
+    const r = await fetch(`${SERVER}/status`, { signal: AbortSignal.timeout(1500) });
+    const j = await r.json();
+    if (j.ok) {
+      serverOk = true;
+      st('on', `Serveur actif — ${j.model}`);
+      document.getElementById('srvBtn').classList.add('on');
+      document.getElementById('srvBtn').textContent = '● Serveur actif';
+      if (origData) document.getElementById('detectBtn').disabled = false;
+    }
+  } catch {}
+}, 5000);
+
+checkServer();
+
+// ── UPLOAD ────────────────────────────────────────────────────────────────────
+document.getElementById('drop').addEventListener('click',    () => document.getElementById('fi').click());
+document.getElementById('drop').addEventListener('dragover', e  => e.preventDefault());
+document.getElementById('drop').addEventListener('drop',     e  => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); });
+document.getElementById('fi').addEventListener('change',     e  => loadFile(e.target.files[0]));
+
+function loadFile(file) {
+  if (!file) return;
+  if (!file.type.match(/image\/(png|jpeg)/)) { st('err', 'PNG ou JPG uniquement'); return; }
+  if (file.size > 50 * 1024 * 1024)         { st('err', 'Max 50 Mo');             return; }
+
+  const r = new FileReader();
+  r.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      cv.width  = img.width;
+      cv.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      origData    = ctx.getImageData(0, 0, cv.width, cv.height);
+      censoredCnv = null; faces = [];
+      wmDragX = wmDragY = null;
+
+      document.getElementById('drop').style.display = 'none';
+      cv.style.display = 'block';
+      document.getElementById('expBtn').disabled    = false;
+      document.getElementById('badge').style.display = 'none';
+      document.getElementById('detectBtn').disabled  = !serverOk;
+      document.getElementById('resetBtn').disabled   = true;
+
+      st('on', `Image chargée — ${img.width}×${img.height}px`);
+    };
+    img.src = ev.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+// ── DETECT ────────────────────────────────────────────────────────────────────
+async function doDetect() {
+  if (!origData || !serverOk) return;
+  st('busy', 'Détection des visages…');
+
+  const tmpCnv = document.createElement('canvas');
+  tmpCnv.width = cv.width; tmpCnv.height = cv.height;
+  tmpCnv.getContext('2d').putImageData(origData, 0, 0);
+  const b64 = tmpCnv.toDataURL('image/jpeg', 0.9);
+
+  const conf = (+document.getElementById('sens').value) / 10;
+
+  try {
+    const res = await fetch(`${SERVER}/detect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: b64, confidence: conf })
+    });
+    const json = await res.json();
+    if (json.error) throw new Error(json.error);
+
+    faces = json.faces;
+    const n = faces.length;
+    const badge = document.getElementById('badge');
+    badge.textContent   = `${n} visage${n > 1 ? 's' : ''}`;
+    badge.style.display = n > 0 ? '' : 'none';
+
+    doEffect();
+    st('on', n > 0 ? `${n} visage${n>1?'s':''} détecté${n>1?'s':''}` : 'Aucun visage détecté');
+  } catch(e) {
+    st('err', `Erreur : ${e.message}`);
+  }
+}
+
+// ── EFFECT ────────────────────────────────────────────────────────────────────
+function doEffect() {
+  ctx.putImageData(origData, 0, 0);
+  const f = +document.getElementById('force').value;
+  faces.forEach(b => mode === 'blur' ? doBlur(b, f) : doPixel(b, f));
+
+  censoredCnv = document.createElement('canvas');
+  censoredCnv.width = cv.width; censoredCnv.height = cv.height;
+  censoredCnv.getContext('2d').putImageData(ctx.getImageData(0,0,cv.width,cv.height), 0, 0);
+
+  document.getElementById('resetBtn').disabled = false;
+  redraw();
+}
+
+function ellOf(b) {
+  return {
+    cx: b.x + b.width  / 2,
+    cy: b.y + b.height / 2,
+    rx: (b.width  / 2) * 1.08,
+    ry: (b.height / 2) * 1.15
+  };
+}
+
+function doBlur(b, force) {
+  const blurPx = Math.round(2 + force * 0.58);
+  const { cx, cy, rx, ry } = ellOf(b);
+  const off = document.createElement('canvas');
+  off.width = cv.width; off.height = cv.height;
+  off.getContext('2d').putImageData(origData, 0, 0);
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+  ctx.filter = `blur(${blurPx}px)`;
+  ctx.drawImage(off, 0, 0);
+  ctx.filter = 'none';
+  ctx.restore();
+}
+
+function doPixel(b, force) {
+  const blk = Math.max(2, Math.round(2 + force * 0.4));
+  const { cx, cy, rx, ry } = ellOf(b);
+  const x = Math.max(0, Math.floor(b.x));
+  const y = Math.max(0, Math.floor(b.y));
+  const w = Math.min(cv.width  - x, Math.ceil(b.width));
+  const h = Math.min(cv.height - y, Math.ceil(b.height));
+  const tmp = document.createElement('canvas');
+  tmp.width = cv.width; tmp.height = cv.height;
+  const tc = tmp.getContext('2d');
+  tc.putImageData(origData, 0, 0);
+  const d = tc.getImageData(x, y, w, h), pd = d.data;
+  for (let by=0; by<h; by+=blk) for (let bx=0; bx<w; bx+=blk) {
+    const bw=Math.min(blk,w-bx), bh=Math.min(blk,h-by);
+    let r=0,g=0,b2=0,n=0;
+    for (let dy=0;dy<bh;dy++) for (let dx=0;dx<bw;dx++) {
+      const i=((by+dy)*w+(bx+dx))*4; r+=pd[i];g+=pd[i+1];b2+=pd[i+2];n++;
+    }
+    r=r/n|0; g=g/n|0; b2=b2/n|0;
+    for (let dy=0;dy<bh;dy++) for (let dx=0;dx<bw;dx++) {
+      const i=((by+dy)*w+(bx+dx))*4; pd[i]=r;pd[i+1]=g;pd[i+2]=b2;
+    }
+  }
+  tc.putImageData(d, x, y);
+  ctx.save();
+  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+  ctx.drawImage(tmp, 0, 0);
+  ctx.restore();
+}
+
+function doReset() {
+  ctx.putImageData(origData, 0, 0);
+  censoredCnv = null; faces = [];
+  wmDragX = wmDragY = null;
+  document.getElementById('badge').style.display = 'none';
+  document.getElementById('resetBtn').disabled   = true;
+  redraw();
+  st('on', 'Réinitialisé');
+}
+
+// ── WATERMARK PNG ─────────────────────────────────────────────────────────────
+document.getElementById('wmFi').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file || !file.type.match(/image\/png/)) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    wmImg = new Image();
+    wmImg.onload = () => {
+      const hint = document.getElementById('wmHint');
+      const prev = document.createElement('img');
+      prev.src = ev.target.result;
+      document.getElementById('wmZone').innerHTML = '';
+      document.getElementById('wmZone').appendChild(prev);
+      redraw();
+    };
+    wmImg.src = ev.target.result;
+  };
+  r.readAsDataURL(file);
+});
+
+function redraw() {
+  if (!origData) return;
+  if (censoredCnv) ctx.drawImage(censoredCnv, 0, 0);
+  else ctx.putImageData(origData, 0, 0);
+  paintWm(ctx, cv.width, cv.height, 1);
+}
+
+function paintWm(c, W, H, scale) {
+  if (!wmImg) return;
+  const pct    = +document.getElementById('wmS').value / 100;
+  const op     = +document.getElementById('wmO').value / 100;
+  const margin = Math.round(+document.getElementById('wmM').value * scale);
+  const iw     = Math.round(W * pct);
+  const ih     = Math.round(iw * wmImg.height / wmImg.width);
+  let x, y;
+  if (wmDragX !== null) {
+    x = wmDragX * scale - iw / 2;
+    y = wmDragY * scale - ih / 2;
+  } else {
+    const P = {
+      tl:[margin, margin],
+      tc:[W/2-iw/2, margin],
+      tr:[W-margin-iw, margin],
+      ml:[margin, H/2-ih/2],
+      mc:[W/2-iw/2, H/2-ih/2],
+      mr:[W-margin-iw, H/2-ih/2],
+      bl:[margin, H-margin-ih],
+      bc:[W/2-iw/2, H-margin-ih],
+      br:[W-margin-iw, H-margin-ih],
+    };
+    [x, y] = P[wmPos] || P.br;
+  }
+  c.save();
+  c.globalAlpha = op;
+  c.drawImage(wmImg, x, y, iw, ih);
+  c.restore();
+}
+
+// Drag watermark
+cv.addEventListener('mousedown', e => {
+  if (!origData || !wmImg) return;
+  isDrag = true;
+  document.querySelectorAll('.g9-c').forEach(el => el.classList.remove('on'));
+  wmPos = 'custom';
+  moveWm(e);
+});
+cv.addEventListener('mousemove', e => { if (isDrag) moveWm(e); });
+cv.addEventListener('mouseup',   () => { isDrag = false; });
+cv.addEventListener('mouseleave',() => { isDrag = false; });
+
+function moveWm(e) {
+  const r = cv.getBoundingClientRect();
+  wmDragX = (e.clientX - r.left) * (cv.width  / r.width);
+  wmDragY = (e.clientY - r.top)  * (cv.height / r.height);
+  redraw();
+}
+
+function setPos(p, el) {
+  wmPos = p; wmDragX = wmDragY = null;
+  document.querySelectorAll('.g9-c').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  redraw();
+}
+
+// ── CONTROLS ──────────────────────────────────────────────────────────────────
+function setMode(m) {
+  mode = m;
+  document.getElementById('tBlur').classList.toggle('on',  m==='blur');
+  document.getElementById('tPixel').classList.toggle('on', m==='pixel');
+  if (origData && faces.length) doEffect();
+}
+
+function setFmt(f) {
+  fmt = f;
+  document.getElementById('tJpeg').classList.toggle('on', f==='jpeg');
+  document.getElementById('tPng').classList.toggle('on',  f==='png');
+  document.getElementById('qCtrl').style.display = f==='jpeg' ? '' : 'none';
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────────────────
+function doExport() {
+  const sizeOpt = document.getElementById('szSel').value;
+  const quality = +document.getElementById('qSlider').value / 100;
+  const srcW = cv.width, srcH = cv.height;
+  let outW = srcW, outH = srcH;
+
+  if (sizeOpt !== 'original' && srcW > +sizeOpt) {
+    outW = +sizeOpt;
+    outH = Math.round(srcH * (outW / srcW));
+  }
+
+  const scale = outW / srcW;
+  const out   = document.createElement('canvas');
+  out.width   = outW; out.height = outH;
+  const oc    = out.getContext('2d');
+
+  if (censoredCnv) {
+    oc.drawImage(censoredCnv, 0, 0, outW, outH);
+  } else if (origData) {
+    const t = document.createElement('canvas');
+    t.width = srcW; t.height = srcH;
+    t.getContext('2d').putImageData(origData, 0, 0);
+    oc.drawImage(t, 0, 0, outW, outH);
+  }
+
+  paintWm(oc, outW, outH, scale);
+
+  const id   = crypto.getRandomValues(new Uint8Array(6)).reduce((a,b)=>a+b.toString(16).padStart(2,'0'),'').toUpperCase();
+  const mime = fmt === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const ext  = fmt === 'jpeg' ? 'jpg' : 'png';
+  const a    = document.createElement('a');
+  a.href     = out.toDataURL(mime, quality);
+  a.download = `${id}.${ext}`;
+  a.click();
+  st('on', `Exporté · ${outW}×${outH}px · sans métadonnées`);
+}
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+function st(state, msg) {
+  const p = document.getElementById('pip');
+  p.className = 'pip' + (state ? ' '+state : '');
+  document.getElementById('stxt').textContent = msg;
+}
+</script>
+</body>
+</html>

@@ -59,6 +59,20 @@ header {
     align-items: center;
 }
 
+.tool-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #111;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    margin-right: 18px;
+    transition: opacity 0.2s;
+}
+
+.tool-link:hover {
+    opacity: 0.5;
+}
+
 .github-link {
     display: flex;
     align-items: center;
