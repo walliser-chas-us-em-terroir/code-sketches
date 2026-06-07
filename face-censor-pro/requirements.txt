@@ -4,3 +4,5 @@ insightface
 onnxruntime
 Pillow
 numpy
+ultralytics
+opencv-python

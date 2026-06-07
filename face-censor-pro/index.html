@@ -115,6 +115,29 @@ body {
 
 #cv { max-width:100%; max-height:100%; display:none; cursor:crosshair; }
 
+/* Bouton « Changer d'image » — bas gauche de la vue */
+.restart {
+  position:absolute; bottom:14px; left:14px; z-index:5;
+  padding:8px 13px;
+  font-family:inherit; font-size:11px; font-weight:700;
+  border-radius:7px; border:1px solid var(--bd2);
+  background:rgba(19,19,19,.85); color:var(--tx);
+  cursor:pointer; transition:all .14s; backdrop-filter:blur(6px);
+  letter-spacing:.01em;
+}
+.restart:hover { background:#222; border-color:var(--red); color:#fff; }
+
+/* Voile « déposez ici » pendant un drag global */
+.dropover {
+  position:absolute; inset:0; z-index:20;
+  display:none; align-items:center; justify-content:center;
+  background:rgba(11,11,11,.82);
+  border:2px dashed var(--bd2); border-radius:8px;
+  color:var(--tx); font-size:14px; font-weight:700; letter-spacing:-.01em;
+  pointer-events:none;
+}
+.dropover.on { display:flex; border-color:var(--red); }
+
 /* ── PANEL ── */
 .panel {
   width: var(--panel);
@@ -165,6 +188,10 @@ body {
 }
 .ctrl-l strong { color:var(--tx); font-weight:600; }
 input[type="range"] { width:100%; height:2px; accent-color:#555; cursor:pointer; }
+.hint { font-size:10px; line-height:1.5; color:var(--mu2); margin:2px 0 0; }
+.heads-tog { font-weight:600; }
+.heads-tog.on { background:var(--s2); color:var(--tx); border-color:var(--amber); }
+.heads-tog:disabled { opacity:.35; cursor:not-allowed; }
 
 /* Watermark PNG upload zone */
 .wm-upload {
@@ -218,7 +245,7 @@ select {
   background:var(--bg); border:1px solid var(--bd2);
   border-radius:6px; padding:10px 12px;
   font-family:monospace; font-size:11px; color:var(--green);
-  margin-bottom:12px; word-break:break-all;
+  margin-bottom:12px; word-break:break-all; white-space:pre-wrap;
 }
 .modal-close {
   width:100%; padding:9px; font-family:inherit; font-size:12px;
@@ -253,6 +280,8 @@ select {
       <div class="drop-h">PNG ou JPG · max 50 Mo</div>
     </div>
     <canvas id="cv"></canvas>
+    <button class="restart" id="restartBtn" onclick="newImage()" style="display:none;">↻ Changer d'image</button>
+    <div class="dropover" id="dropover">Déposez la nouvelle image</div>
     <input type="file" id="fi" accept="image/png,image/jpeg" style="display:none" />
   </div>
 
@@ -266,7 +295,16 @@ select {
         <input type="range" id="sens" min="1" max="10" value="7"
                oninput="document.getElementById('sensV').textContent=this.value" />
       </div>
-      <button class="btn" id="detectBtn" onclick="doDetect()" disabled style="margin-top:4px;">Analyser l'image</button>
+      <div class="r2" style="margin-bottom:6px;">
+        <button class="tog on" id="tDeep" onclick="toggleDeep()">Visages lointains</button>
+        <button class="tog"    id="tFast" onclick="toggleDeep()">Rapide</button>
+      </div>
+      <div class="hint">Scan par tuiles : repère les petits visages de loin. Désactiver = plus rapide sur les gros plans.</div>
+      <button class="tog heads-tog" id="tHeads" onclick="toggleHeads()" style="margin-top:8px;width:100%;" disabled>
+        Têtes de dos / détournées — silhouette
+      </button>
+      <div class="hint" id="headsHint">Floute aussi les têtes sans visage visible (de dos, de profil) en suivant leur contour exact.</div>
+      <button class="btn" id="detectBtn" onclick="doDetect()" disabled style="margin-top:8px;">Analyser l'image</button>
     </div>
 
     <div class="sec">
@@ -308,9 +346,9 @@ select {
         <div class="g9-c" data-p="ml" onclick="setPos('ml',this)"><div class="d"></div></div>
         <div class="g9-c" data-p="mc" onclick="setPos('mc',this)"><div class="d"></div></div>
         <div class="g9-c" data-p="mr" onclick="setPos('mr',this)"><div class="d"></div></div>
-        <div class="g9-c on" data-p="br" onclick="setPos('br',this)"><div class="d"></div></div>
+        <div class="g9-c" data-p="bl" onclick="setPos('bl',this)"><div class="d"></div></div>
         <div class="g9-c" data-p="bc" onclick="setPos('bc',this)"><div class="d"></div></div>
-        <div class="g9-c" data-p="br2" onclick="setPos('br',this)"><div class="d"></div></div>
+        <div class="g9-c on" data-p="br" onclick="setPos('br',this)"><div class="d"></div></div>
       </div>
 
       <div class="ctrl">
@@ -348,11 +386,10 @@ select {
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h4>Démarrer le serveur de détection</h4>
-    <p>Le serveur Python fait tourner InsightFace (RetinaFace) — le modèle le plus puissant disponible localement, capable de détecter 200+ visages dans une tribune.</p>
-    <p><strong>Option 1</strong> — Double-cliquez ce fichier dans le Finder :</p>
-    <div class="cmd-box">face-censor-pro / lancer-serveur.command</div>
-    <p><strong>Option 2</strong> — Dans le Terminal :</p>
+    <p>Le serveur Python fait tourner InsightFace (RetinaFace) en <strong>scan multi-échelle</strong> : l'image est analysée entière puis redécoupée en tuiles à pleine résolution, ce qui repère aussi bien les gros plans que les visages lointains dans une foule.</p>
+    <p>Dans le <strong>Terminal</strong>, copiez-collez ces deux lignes :</p>
     <div class="cmd-box" id="cmdBox"></div>
+    <p style="color:var(--mu2);">Laissez la fenêtre du Terminal ouverte, puis cliquez « Démarrer le serveur » ici.</p>
     <button class="modal-close" onclick="closeModal()">Fermer</button>
   </div>
 </div>
@@ -372,6 +409,9 @@ let wmDragX     = null;
 let wmDragY     = null;
 let isDrag      = false;
 let serverOk    = false;
+let deepScan    = true;
+let headsScan   = false;
+let serverHeads = false;
 
 const SERVER = 'http://localhost:8765';
 
@@ -382,16 +422,30 @@ async function checkServer() {
     const r = await fetch(`${SERVER}/status`, { signal: AbortSignal.timeout(3000) });
     const j = await r.json();
     if (j.ok) {
-      serverOk = true;
-      st('on', `Serveur actif — ${j.model}`);
-      document.getElementById('srvBtn').classList.add('on');
-      document.getElementById('srvBtn').textContent = '● Serveur actif';
-      if (origData) document.getElementById('detectBtn').disabled = false;
+      onServerUp(j);
     }
   } catch {
     serverOk = false;
     st('err', 'Serveur introuvable');
     showModal();
+  }
+}
+
+function onServerUp(j) {
+  serverOk = true;
+  serverHeads = !!j.heads;
+  st('on', `Serveur actif — ${j.model}`);
+  document.getElementById('srvBtn').classList.add('on');
+  document.getElementById('srvBtn').textContent = '● Serveur actif';
+  if (origData) document.getElementById('detectBtn').disabled = false;
+
+  const tHeads = document.getElementById('tHeads');
+  tHeads.disabled = !serverHeads;
+  if (!serverHeads) {
+    headsScan = false;
+    tHeads.classList.remove('on');
+    document.getElementById('headsHint').textContent =
+      'Indisponible : module de segmentation non chargé sur le serveur.';
   }
 }
 
@@ -410,11 +464,7 @@ setInterval(async () => {
     const r = await fetch(`${SERVER}/status`, { signal: AbortSignal.timeout(1500) });
     const j = await r.json();
     if (j.ok) {
-      serverOk = true;
-      st('on', `Serveur actif — ${j.model}`);
-      document.getElementById('srvBtn').classList.add('on');
-      document.getElementById('srvBtn').textContent = '● Serveur actif';
-      if (origData) document.getElementById('detectBtn').disabled = false;
+      onServerUp(j);
     }
   } catch {}
 }, 5000);
@@ -422,10 +472,39 @@ setInterval(async () => {
 checkServer();
 
 // ── UPLOAD ────────────────────────────────────────────────────────────────────
-document.getElementById('drop').addEventListener('click',    () => document.getElementById('fi').click());
-document.getElementById('drop').addEventListener('dragover', e  => e.preventDefault());
-document.getElementById('drop').addEventListener('drop',     e  => { e.preventDefault(); loadFile(e.dataTransfer.files[0]); });
-document.getElementById('fi').addEventListener('change',     e  => loadFile(e.target.files[0]));
+document.getElementById('drop').addEventListener('click', () => document.getElementById('fi').click());
+document.getElementById('fi').addEventListener('change',  e => loadFile(e.target.files[0]));
+
+// Glisser-déposer sur TOUTE la fenêtre — fonctionne aussi quand une image est
+// déjà chargée (remplace l'image en cours). Compteur de profondeur pour éviter
+// le clignotement du voile quand le curseur passe sur les éléments enfants.
+let dragDepth = 0;
+const dropover = document.getElementById('dropover');
+const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+
+window.addEventListener('dragenter', e => {
+  e.preventDefault();
+  if (!hasFiles(e)) return;
+  dragDepth++;
+  dropover.classList.add('on');
+});
+window.addEventListener('dragover', e => { if (hasFiles(e)) e.preventDefault(); });
+window.addEventListener('dragleave', e => {
+  if (!hasFiles(e)) return;
+  dragDepth--;
+  if (dragDepth <= 0) { dragDepth = 0; dropover.classList.remove('on'); }
+});
+window.addEventListener('drop', e => {
+  e.preventDefault();
+  dragDepth = 0;
+  dropover.classList.remove('on');
+  const f = e.dataTransfer.files[0];
+  if (f) loadFile(f);
+});
+
+// Bouton « Changer d'image » (bas gauche) : rouvre simplement le sélecteur ;
+// si on annule, l'image courante est conservée.
+function newImage() { document.getElementById('fi').click(); }
 
 function loadFile(file) {
   if (!file) return;
@@ -445,6 +524,7 @@ function loadFile(file) {
 
       document.getElementById('drop').style.display = 'none';
       cv.style.display = 'block';
+      document.getElementById('restartBtn').style.display = '';
       document.getElementById('expBtn').disabled    = false;
       document.getElementById('badge').style.display = 'none';
       document.getElementById('detectBtn').disabled  = !serverOk;
@@ -468,24 +548,32 @@ async function doDetect() {
   const b64 = tmpCnv.toDataURL('image/jpeg', 0.9);
 
   const conf = (+document.getElementById('sens').value) / 10;
+  st('busy', headsScan ? 'Détection visages + têtes (silhouettes)…'
+                       : (deepScan ? 'Scan multi-échelle (visages lointains)…'
+                                   : 'Détection des visages…'));
 
   try {
     const res = await fetch(`${SERVER}/detect`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: b64, confidence: conf })
+      body: JSON.stringify({ image: b64, confidence: conf, deep: deepScan, heads: headsScan })
     });
     const json = await res.json();
     if (json.error) throw new Error(json.error);
 
     faces = json.faces;
-    const n = faces.length;
+    const n  = faces.length;
+    const nh = faces.filter(f => f.kind === 'head').length;
+    const nf = n - nh;
     const badge = document.getElementById('badge');
-    badge.textContent   = `${n} visage${n > 1 ? 's' : ''}`;
+    badge.textContent   = nh > 0 ? `${nf} visage${nf>1?'s':''} · ${nh} tête${nh>1?'s':''}`
+                                 : `${nf} visage${nf>1?'s':''}`;
     badge.style.display = n > 0 ? '' : 'none';
 
     doEffect();
-    st('on', n > 0 ? `${n} visage${n>1?'s':''} détecté${n>1?'s':''}` : 'Aucun visage détecté');
+    st('on', n > 0 ? (nh > 0 ? `${nf} visage${nf>1?'s':''} + ${nh} tête${nh>1?'s':''} détecté(s)`
+                             : `${nf} visage${nf>1?'s':''} détecté${nf>1?'s':''}`)
+                   : 'Aucun visage détecté');
   } catch(e) {
     st('err', `Erreur : ${e.message}`);
   }
@@ -506,22 +594,38 @@ function doEffect() {
 }
 
 function ellOf(b) {
+  // Ellipse élargie : couvre le front, les oreilles et les têtes de profil /
+  // détournées dont la boîte du détecteur ne cadre que la partie visible.
   return {
     cx: b.x + b.width  / 2,
-    cy: b.y + b.height / 2,
-    rx: (b.width  / 2) * 1.08,
-    ry: (b.height / 2) * 1.15
+    cy: b.y + b.height * 0.46,   // léger décalage vers le haut (front/cheveux)
+    rx: (b.width  / 2) * 1.22,
+    ry: (b.height / 2) * 1.38
   };
+}
+
+// Trace la zone à censurer dans le contexte : polygone exact (têtes segmentées)
+// si disponible, sinon ellipse (visages). À appeler entre save() et clip().
+function clipRegion(c, b) {
+  if (b.polygon && b.polygon.length >= 3) {
+    c.beginPath();
+    c.moveTo(b.polygon[0][0], b.polygon[0][1]);
+    for (let i = 1; i < b.polygon.length; i++) c.lineTo(b.polygon[i][0], b.polygon[i][1]);
+    c.closePath();
+  } else {
+    const { cx, cy, rx, ry } = ellOf(b);
+    c.beginPath();
+    c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  }
 }
 
 function doBlur(b, force) {
   const blurPx = Math.round(2 + force * 0.58);
-  const { cx, cy, rx, ry } = ellOf(b);
   const off = document.createElement('canvas');
   off.width = cv.width; off.height = cv.height;
   off.getContext('2d').putImageData(origData, 0, 0);
   ctx.save();
-  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+  clipRegion(ctx, b); ctx.clip();
   ctx.filter = `blur(${blurPx}px)`;
   ctx.drawImage(off, 0, 0);
   ctx.filter = 'none';
@@ -530,7 +634,6 @@ function doBlur(b, force) {
 
 function doPixel(b, force) {
   const blk = Math.max(2, Math.round(2 + force * 0.4));
-  const { cx, cy, rx, ry } = ellOf(b);
   const x = Math.max(0, Math.floor(b.x));
   const y = Math.max(0, Math.floor(b.y));
   const w = Math.min(cv.width  - x, Math.ceil(b.width));
@@ -553,7 +656,7 @@ function doPixel(b, force) {
   }
   tc.putImageData(d, x, y);
   ctx.save();
-  ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.clip();
+  clipRegion(ctx, b); ctx.clip();
   ctx.drawImage(tmp, 0, 0);
   ctx.restore();
 }
@@ -658,6 +761,18 @@ function setMode(m) {
   document.getElementById('tBlur').classList.toggle('on',  m==='blur');
   document.getElementById('tPixel').classList.toggle('on', m==='pixel');
   if (origData && faces.length) doEffect();
+}
+
+function toggleDeep() {
+  deepScan = !deepScan;
+  document.getElementById('tDeep').classList.toggle('on',  deepScan);
+  document.getElementById('tFast').classList.toggle('on', !deepScan);
+}
+
+function toggleHeads() {
+  if (!serverHeads) return;
+  headsScan = !headsScan;
+  document.getElementById('tHeads').classList.toggle('on', headsScan);
 }
 
 function setFmt(f) {
