@@ -42,10 +42,7 @@ la souris)**. Tout se pose à la règle sur le quadrillage :
 Le croquis montre donc : les deux cercles, la souris à un endroit, le trait, et la pupille
 collée au bord intérieur quand la souris est loin → c'est tout l'algorithme en un dessin.
 
-<!-- TODO : déposer ici la photo du croquis papier (ex. sketches/croquis-papier.jpg) -->
-<img src="sketches/croquis-papier.jpg" alt="Croquis sur papier quadrillé" width="320">
-
-*(Emplacement réservé — prendre la photo du croquis papier et remplacer le lien ci-dessus.)*
+<img src="sketches/croquis-fockice.jpeg" alt="Croquis sur papier quadrillé du projet Fockice" width="420">
 
 ---
 
