@@ -30,9 +30,17 @@
 ## 🖉 Croquis sur papier quadrillé
 
 Les consignes demandent **au moins un projet réalisé à l'aide d'un croquis sur papier
-quadrillé**. Le projet conçu d'abord sur papier est le **Générateur QR (n°4)** / le
-**Damier** : grille de cases régulières, repérée case par case sur le quadrillage avant le
-passage au code (tableau 2D `cols × rows`).
+quadrillé**. Le projet conçu d'abord sur papier est le **n°20 — Fockice (les yeux qui suivent
+la souris)**. Tout se pose à la règle sur le quadrillage :
+
+- deux **cercles** (les yeux), de centre `(cx, cy)` et de rayon `irisR` ;
+- un **point cible** = la souris `(mouseX, mouseY)` ;
+- on trace le **trait** du centre vers la souris : son angle est `a = atan2(dy, dx)` ;
+- la **pupille** se place sur ce trait, mais à une distance **bornée** pour rester dans l'œil :
+  `d = min(distance, irisR − pupilR)`.
+
+Le croquis montre donc : les deux cercles, la souris à un endroit, le trait, et la pupille
+collée au bord intérieur quand la souris est loin → c'est tout l'algorithme en un dessin.
 
 <!-- TODO : déposer ici la photo du croquis papier (ex. sketches/croquis-papier.jpg) -->
 <img src="sketches/croquis-papier.jpg" alt="Croquis sur papier quadrillé" width="320">
