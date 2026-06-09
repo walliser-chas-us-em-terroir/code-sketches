@@ -35,7 +35,7 @@ quadrillé**. Le projet conçu d'abord sur papier est le **Générateur QR (n°4
 passage au code (tableau 2D `cols × rows`).
 
 <!-- TODO : déposer ici la photo du croquis papier (ex. sketches/croquis-papier.jpg) -->
-![Croquis sur papier quadrillé](sketches/croquis-papier.jpg)
+<img src="sketches/croquis-papier.jpg" alt="Croquis sur papier quadrillé" width="320">
 
 *(Emplacement réservé — prendre la photo du croquis papier et remplacer le lien ci-dessus.)*
 
@@ -44,7 +44,7 @@ passage au code (tableau 2D `cols × rows`).
 ## Les 20 croquis
 
 ### 1 — Cercles concentriques
-![Cercles concentriques](sketches/circles.png)
+<img src="sketches/circles.png" alt="Cercles concentriques" width="320">
 Premier croquis : prise en main de la boucle `draw()`. Un cercle est redessiné à chaque
 frame avec un rayon qui grandit (`size += 10`), sans effacer le fond → empilement concentrique.
 
@@ -54,7 +54,7 @@ de croissance — pas besoin de boucle `for`, c'est le rafraîchissement qui fai
 ---
 
 ### 2 — Damier parfait
-![Damier parfait](sketches/perfect-damier.png)
+<img src="sketches/perfect-damier.png" alt="Damier parfait" width="320">
 Damier statique. Double boucle `for` sur `x`/`y` par pas de 50 px ; `noLoop()` car l'image est
 fixe.
 
@@ -67,7 +67,7 @@ La parité de `(colonne + ligne)` donne l'alternance d'échiquier. Motif réutil
 ---
 
 ### 3 — Dégradé de couleur
-![Dégradé de couleur](sketches/color-fade.png)
+<img src="sketches/color-fade.png" alt="Dégradé de couleur" width="320">
 Grille 8×8 de carrés. La composante rouge dépend de `x`, la bleue de `y` → dégradé 2D.
 
 **À réutiliser :** mapper les indices de boucle directement sur les canaux de couleur
@@ -76,7 +76,7 @@ Grille 8×8 de carrés. La composante rouge dépend de `x`, la bleue de `y` → 
 ---
 
 ### 4 — Générateur QR (faux)
-![Générateur QR](sketches/qr-code-generator.png)
+<img src="sketches/qr-code-generator.png" alt="Générateur QR" width="320">
 Grille 10×10 remplie de niveaux de gris aléatoires — esthétique « QR code ». Premier usage
 d'un **tableau à deux dimensions**.
 
@@ -93,7 +93,7 @@ On remplit `colors[i][j] = random(255)` puis on dessine. Base de tout travail su
 ---
 
 ### 5 — Zigzag
-![Zigzag](sketches/zigzag.png)
+<img src="sketches/zigzag.png" alt="Zigzag" width="320">
 **Première fonction personnalisée paramétrée.** `zigzag(x, y, l, h, e)` trace un motif en
 dents à partir d'une position, d'une largeur, d'une hauteur et d'une épaisseur.
 
@@ -103,7 +103,7 @@ dents à partir d'une position, d'une largeur, d'une hauteur et d'une épaisseur
 ---
 
 ### 6 — Disque DVD
-![Disque DVD](sketches/disque-dvd.png)
+<img src="sketches/disque-dvd.png" alt="Disque DVD" width="320">
 Balle qui rebondit (logique « DVD »). Position `posX/posY` + vitesse `vitX/vitY` ; on inverse
 la vitesse au contact d'un bord. Une 3ᵉ « vitesse » `vitR` fait osciller la couleur.
 
@@ -117,7 +117,7 @@ Touche `s` → `save("dessin.png")` pour exporter. Brique de base de toute anima
 ---
 
 ### 7 — Logo DVD (objets + transparence)
-![Logo DVD](sketches/logo-dvd.png)
+<img src="sketches/logo-dvd.png" alt="Logo DVD" width="320">
 Reprise du rebond, mais en **objets** (`Object.create`) : plusieurs logos partagent la même
 méthode `update()`. On rend aussi le blanc du PNG transparent en manipulant les pixels.
 
@@ -134,7 +134,7 @@ logo.updatePixels();
 ---
 
 ### 8 — Damier fun (rotation locale)
-![Damier fun](sketches/fun-damier.png)
+<img src="sketches/fun-damier.png" alt="Damier fun" width="320">
 Le damier de base, mais animé : `push()/translate()/rotate()/pop()` autour du centre de
 chaque case. Seules les cases au-delà de 60 % de la distance max tournent, et d'autant plus
 qu'elles sont loin du coin.
@@ -145,7 +145,7 @@ son propre centre sans affecter le reste de la scène + `map`/distance pour dose
 ---
 
 ### 9 — Drapeaux en mouvement (classe + ondulation)
-![Drapeaux en mouvement](sketches/motion-flag.png)
+<img src="sketches/motion-flag.png" alt="Drapeaux en mouvement" width="320">
 **Première vraie `class`** (`Flag`). Chaque drapeau est découpé en ~500 fines tranches
 horizontales décalées par un `sin()` → effet de drapeau qui flotte au vent.
 
@@ -158,7 +158,7 @@ rect(x + i * stripe + offset, y, stripe, sliceH + 1);
 ---
 
 ### 10 — Palindrome Checker
-![Palindrome Checker](sketches/palindrome-cheker.png)
+<img src="sketches/palindrome-cheker.png" alt="Palindrome Checker" width="320">
 Sortie du dessin : **manipulation de chaînes + DOM**. On nettoie la saisie puis on la compare
 à son inverse.
 
@@ -175,7 +175,7 @@ Pattern `split('').reverse().join('')` = inverser une chaîne. Écoute clavier s
 ---
 
 ### 11 — Oblique Stratégie
-![Oblique Stratégie](sketches/oblique-strategie.png)
+<img src="sketches/oblique-strategie.png" alt="Oblique Stratégie" width="320">
 Hommage aux *Oblique Strategies* de Brian Eno : un tableau de ~130 phrases, on en tire une au
 hasard. Travail sur les **tableaux** et le tirage aléatoire.
 
@@ -185,7 +185,7 @@ hasard. Travail sur les **tableaux** et le tirage aléatoire.
 ---
 
 ### 12 — Color Flipper
-![Color Flipper](sketches/color-flipper.png)
+<img src="sketches/color-flipper.png" alt="Color Flipper" width="320">
 Le fond change de couleur (couleur nommée ou RGB aléatoire). Travail sur le **style CSS piloté
 en JS**.
 
@@ -202,7 +202,7 @@ function randomColor(){
 ---
 
 ### 13 — Pointillisme (spirale de Fermat)
-![Pointillisme](sketches/pointillisme.png)
+<img src="sketches/pointillisme.png" alt="Pointillisme" width="320">
 Disposition en **spirale phyllotaxique** : à chaque point, on tourne de l'angle d'or
 (137,508°) et on éloigne le point de `√n`. Donne la répartition des graines de tournesol.
 
@@ -218,7 +218,7 @@ Premier usage du `colorMode(HSB)` pour faire varier la teinte avec `n`.
 ---
 
 ### 14 — Destructor (grille qui se désagrège)
-![Destructor](sketches/destructor.png)
+<img src="sketches/destructor.png" alt="Destructor" width="320">
 Grille de carrés régulière en haut qui se **désorganise progressivement** vers le bas (clin
 d'œil au *Schotter* de Georg Nees). Le facteur `t = row / (rows-1)` (0 → 1) pilote l'amplitude
 du désordre.
@@ -233,7 +233,7 @@ let a  = random(-t*HALF_PI, t*HALF_PI); // rotation qui augmente
 ---
 
 ### 15 — Hardcorevibe (courbe de Lissajous)
-![Hardcorevibe](sketches/hardcorevibe.png)
+<img src="sketches/hardcorevibe.png" alt="Hardcorevibe" width="320">
 Tracé d'une **courbe de Lissajous** dont les fréquences `a` et `b` suivent la souris. Une
 traînée (`trail[]`) garde les 600 derniers points et s'efface en fondu.
 
@@ -248,7 +248,7 @@ trail.push({x,y,h:(t*28)%360}); if (trail.length>600) trail.shift();
 ---
 
 ### 16 — Valaila (paysage de montagnes)
-![Valaila](sketches/valaila.png)
+<img src="sketches/valaila.png" alt="Valaila" width="320">
 Paysage génératif : ciel en dégradé tracé ligne par ligne, puis **4 couches de montagnes** en
 bruit de Perlin (`noise`). Plus la couche est proche, plus l'amplitude et la fréquence
 augmentent → profondeur. `seed` rejoue un paysage différent.
@@ -266,7 +266,7 @@ vertex(width, height); endShape(CLOSE);
 ---
 
 ### 17 — Leman Plouf (ondes dans l'eau)
-![Leman Plouf](sketches/leman-plouf.png)
+<img src="sketches/leman-plouf.png" alt="Leman Plouf" width="320">
 Clic = jet de cailloux dans le Léman. Chaque clic crée 4 objets `Ripple` (classe) : cercles
 qui grandissent et s'estompent, puis se suppriment du tableau quand `alpha <= 0`.
 
@@ -283,7 +283,7 @@ effet de particules.
 ---
 
 ### 18 — Tperduouqwa (motif des 10 PRINT)
-![Tperduouqwa](sketches/tperduouqwa.png)
+<img src="sketches/tperduouqwa.png" alt="Tperduouqwa" width="320">
 Reprise du célèbre `10 PRINT CHR$(205.5+RND(1)); : GOTO 10` : pour chaque case d'une grille, on
 trace au hasard une diagonale `\` ou `/`. Un labyrinthe émerge tout seul.
 
@@ -296,7 +296,7 @@ else                line(x+sz, y, x, y+sz);   // /
 ---
 
 ### 19 — Étoile (interactive)
-![Étoile](sketches/etoile.png)
+<img src="sketches/etoile.png" alt="Étoile" width="320">
 Étoile dessinée par `beginShape/endShape` en alternant rayon externe et interne. Le **nombre
 de branches** suit la souris (`map(mouseX, …, 3, 13)`) et l'étoile tourne lentement.
 
@@ -312,7 +312,7 @@ for (let i = 0; i < pts*2; i++){
 ---
 
 ### 20 — Fockice (yeux qui suivent la souris)
-![Fockice](sketches/fockice.png)
+<img src="sketches/fockice.png" alt="Fockice" width="320">
 Deux yeux dont la pupille suit le curseur, bornée à l'intérieur de l'iris. Trigonométrie :
 `atan2` pour l'angle vers la souris, distance plafonnée à `irisR - pupilR`.
 
