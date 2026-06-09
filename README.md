@@ -8,6 +8,8 @@
 > Ce document est le **dossier d'accompagnement « processus »** demandé dans les consignes :
 > notes, captures d'écran, croquis de recherche et documentation des algorithmes / fonctions
 > utiles à réutiliser. Une section par croquis, dans l'ordre de la galerie.
+> Le **croquis de recherche sur papier quadrillé** (exigé par les consignes) se trouve dans le
+> projet **n°20 — Fockice**, à sa place dans le fil de documentation.
 
 ---
 
@@ -24,25 +26,6 @@
 > **projet personnel réalisé en bonus, hors du cadre de ce projet et hors barème**. Il n'est
 > pas à prendre en compte dans la note. (Détecteur/censeur de visages en p5.js + serveur
 > Python InsightFace.)
-
----
-
-## 🖉 Croquis sur papier quadrillé
-
-Les consignes demandent **au moins un projet réalisé à l'aide d'un croquis sur papier
-quadrillé**. Le projet conçu d'abord sur papier est le **n°20 — Fockice (les yeux qui suivent
-la souris)**. Tout se pose à la règle sur le quadrillage :
-
-- deux **cercles** (les yeux), de centre `(cx, cy)` et de rayon `irisR` ;
-- un **point cible** = la souris `(mouseX, mouseY)` ;
-- on trace le **trait** du centre vers la souris : son angle est `a = atan2(dy, dx)` ;
-- la **pupille** se place sur ce trait, mais à une distance **bornée** pour rester dans l'œil :
-  `d = min(distance, irisR − pupilR)`.
-
-Le croquis montre donc : les deux cercles, la souris à un endroit, le trait, et la pupille
-collée au bord intérieur quand la souris est loin → c'est tout l'algorithme en un dessin.
-
-<img src="sketches/croquis-fockice.jpeg" alt="Croquis sur papier quadrillé du projet Fockice" width="420">
 
 ---
 
@@ -327,6 +310,20 @@ let a = atan2(mouseY - cy, mouseX - cx);
 let d = min(sqrt(dx*dx + dy*dy), irisR - pupilR); // ne sort pas de l'iris
 let px = cx + cos(a)*d, py = cy + sin(a)*d;
 ```
+
+**Croquis de recherche (papier quadrillé) :** ce projet a été conçu d'abord sur papier. Tout
+se pose à la règle sur le quadrillage :
+
+- deux **cercles** (les yeux), de centre `(cx, cy)` et de rayon `irisR` ;
+- un **point cible** = la souris `(mouseX, mouseY)` ;
+- on trace le **trait** du centre vers la souris : son angle est `a = atan2(dy, dx)` ;
+- la **pupille** se place sur ce trait, mais à une distance **bornée** pour rester dans l'œil :
+  `d = min(distance, irisR − pupilR)`.
+
+Le croquis montre les deux cercles, la souris, le trait, et la pupille collée au bord intérieur
+quand la souris est loin → tout l'algorithme en un dessin.
+
+<img src="sketches/croquis-fockice.jpeg" alt="Croquis sur papier quadrillé du projet Fockice" width="420">
 
 ---
 
