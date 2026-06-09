@@ -323,7 +323,7 @@ se pose à la règle sur le quadrillage :
 Le croquis montre les deux cercles, la souris, le trait, et la pupille collée au bord intérieur
 quand la souris est loin → tout l'algorithme en un dessin.
 
-<img src="sketches/croquis-fockice.jpeg" alt="Croquis sur papier quadrillé du projet Fockice" width="420">
+<img src="sketches/croquis-fockice.jpeg?v=2" alt="Croquis sur papier quadrillé du projet Fockice" width="420">
 
 ---
 
